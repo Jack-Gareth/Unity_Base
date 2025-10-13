@@ -1,71 +1,53 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public enum LevelColor
+public class LevelColorManager : Singleton<LevelColorManager>
 {
-    White,
-    Red,
-    Blue,
-    Green
-}
-
-public class LevelColorManager : MonoBehaviour
-{
-    public static LevelColorManager Instance { get; private set; }
-    
     [Header("Color Settings")]
     [SerializeField] private Color redColor = Color.red;
     [SerializeField] private Color blueColor = Color.blue;
     [SerializeField] private Color greenColor = Color.green;
     [SerializeField] private Color whiteColor = Color.white;
-    
+
     [Header("Shader Settings")]
     [SerializeField] private string colorPropertyName = "_Color";
-    
+
     private SpriteRenderer[] levelRenderers;
     private Material[] levelMaterials;
     private BoxCollider2D[] levelColliders;
     private LevelColor currentColor = LevelColor.White;
     private bool inputManagerConnected = false;
-    
+
     public LevelColor CurrentColor => currentColor;
-    
-    private void Awake()
+
+    protected override void Awake()
     {
-        // Set up singleton instance
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            // Multiple instances - destroy this one silently
-        }
-        
+        base.Awake();
+
         // Wait a frame to ensure LevelColorSetup has run first
         StartCoroutine(DelayedSetup());
     }
-    
+
     private System.Collections.IEnumerator DelayedSetup()
     {
         yield return null; // Wait one frame
         FindLevelObjects();
     }
-    
+
     private void Start()
     {
         if (levelRenderers == null || levelRenderers.Length == 0)
         {
             FindLevelObjects();
         }
-        
+
         if (InputManager.Instance == null)
         {
             // InputManager not ready yet, will retry in Update
         }
         TryConnectToInputManager();
     }
-    
+
     private void Update()
     {
         if (!inputManagerConnected && InputManager.Instance != null)
@@ -73,18 +55,18 @@ public class LevelColorManager : MonoBehaviour
             TryConnectToInputManager();
         }
     }
-    
+
     private void OnEnable()
     {
         TryConnectToInputManager();
     }
-    
+
     private void TryConnectToInputManager()
     {
         if (InputManager.Instance != null && !inputManagerConnected)
         {
             DisconnectFromInputManager();
-            
+
             InputManager.Instance.OnRedColorInput += OnRedColorPressed;
             InputManager.Instance.OnBlueColorInput += OnBlueColorPressed;
             InputManager.Instance.OnGreenColorInput += OnGreenColorPressed;
@@ -95,7 +77,7 @@ public class LevelColorManager : MonoBehaviour
             inputManagerConnected = false;
         }
     }
-    
+
     private void DisconnectFromInputManager()
     {
         if (InputManager.Instance != null && inputManagerConnected)
@@ -106,12 +88,12 @@ public class LevelColorManager : MonoBehaviour
             inputManagerConnected = false;
         }
     }
-    
+
     private void OnDisable()
     {
         DisconnectFromInputManager();
     }
-    
+
     /// <summary>
     /// Finds all level objects and caches their renderers, materials, and colliders
     /// </summary>
@@ -122,14 +104,14 @@ public class LevelColorManager : MonoBehaviour
         {
             return;
         }
-        
+
         SpriteRenderer[] allRenderers = levelParent.GetComponentsInChildren<SpriteRenderer>();
         BoxCollider2D[] allColliders = levelParent.GetComponentsInChildren<BoxCollider2D>();
-        
+
         levelRenderers = allRenderers;
         levelColliders = allColliders;
         levelMaterials = new Material[levelRenderers.Length];
-        
+
         for (int i = 0; i < levelRenderers.Length; i++)
         {
             if (levelRenderers[i].material != null)
@@ -138,7 +120,7 @@ public class LevelColorManager : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// Changes all level objects to the specified color
     /// </summary>
@@ -149,10 +131,10 @@ public class LevelColorManager : MonoBehaviour
             ChangeToColor(LevelColor.White);
             return;
         }
-        
+
         Color colorToApply = GetColorValue(targetColor);
         currentColor = targetColor;
-        
+
         if (targetColor == LevelColor.Red)
         {
             colorToApply.a = 0.5f;
@@ -166,7 +148,7 @@ public class LevelColorManager : MonoBehaviour
             SetLevelCollidersEnabled(true);
         }
     }
-    
+
     /// <summary>
     /// Gets the color value for the specified level color
     /// </summary>
@@ -181,7 +163,7 @@ public class LevelColorManager : MonoBehaviour
             _ => whiteColor
         };
     }
-    
+
     /// <summary>
     /// Applies the color to all level object materials
     /// </summary>
@@ -195,7 +177,7 @@ public class LevelColorManager : MonoBehaviour
             }
         }
     }
-    
+
     /// <summary>
     /// Enables or disables all level object colliders
     /// </summary>
@@ -209,17 +191,17 @@ public class LevelColorManager : MonoBehaviour
             }
         }
     }
-    
+
     private void OnRedColorPressed()
     {
         ChangeToColor(LevelColor.Red);
     }
-    
+
     private void OnBlueColorPressed()
     {
         ChangeToColor(LevelColor.Blue);
     }
-    
+
     private void OnGreenColorPressed()
     {
         ChangeToColor(LevelColor.Green);
