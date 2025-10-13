@@ -30,7 +30,7 @@ public class LevelColorSetup : MonoBehaviour
             }
         }
         
-        Debug.Log($"Using shader: {spriteColorShader.name}");
+        // Shader found and will be used
         
         GameObject levelParent = GameObject.Find("Level");
         if (levelParent == null)
@@ -54,10 +54,9 @@ public class LevelColorSetup : MonoBehaviour
             }
             
             renderer.material = newMaterial;
-            Debug.Log($"Applied custom material to {renderer.name}, material: {newMaterial.name}, shader: {newMaterial.shader.name}");
             setupCount++;
         }
         
-        Debug.Log($"Successfully set up {setupCount} level objects with sprite color shader");
+        // Level objects setup complete
     }
 }

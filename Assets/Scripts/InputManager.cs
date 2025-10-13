@@ -43,7 +43,6 @@ public class InputManager : MonoBehaviour
     private void OnEnable()
     {
         playerInputActions?.Enable();
-        Debug.Log("InputManager: Input actions enabled");
     }
     
     private void OnDisable()
@@ -82,19 +81,16 @@ public class InputManager : MonoBehaviour
     
     private void OnRedColorPerformed(InputAction.CallbackContext context)
     {
-        Debug.Log("InputManager: Red color input detected (E key)");
         OnRedColorInput?.Invoke();
     }
     
     private void OnBlueColorPerformed(InputAction.CallbackContext context)
     {
-        Debug.Log("InputManager: Blue color input detected (R key)");
         OnBlueColorInput?.Invoke();
     }
     
     private void OnGreenColorPerformed(InputAction.CallbackContext context)
     {
-        Debug.Log("InputManager: Green color input detected (T key)");
         OnGreenColorInput?.Invoke();
     }
 }
