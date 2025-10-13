@@ -12,7 +12,7 @@ public class InputManager : MonoBehaviour
     public System.Action OnBlueColorInput;
     public System.Action OnGreenColorInput;
     
-    private PlayerInputActions playerInputActions;
+    private InputSystem_Actions playerInputActions;
     
     private void Awake()
     {
@@ -30,7 +30,7 @@ public class InputManager : MonoBehaviour
     
     private void SetupInputActions()
     {
-        playerInputActions = new PlayerInputActions();
+        playerInputActions = new InputSystem_Actions();
         
         playerInputActions.Player.Move.performed += OnMovePerformed;
         playerInputActions.Player.Move.canceled += OnMoveCanceled;
