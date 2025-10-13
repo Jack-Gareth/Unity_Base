@@ -18,7 +18,13 @@ public class PlayerJump : MonoBehaviour
     private float lastGroundedTime;
     private float lastJumpPressedTime;
 
-    private void Awake() => rb = GetComponent<Rigidbody2D>();
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        lastJumpPressedTime = -999f;
+        lastGroundedTime = -999f;
+    }
+
 
     private void Update()
     {
