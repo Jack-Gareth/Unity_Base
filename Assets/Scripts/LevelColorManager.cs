@@ -206,4 +206,12 @@ public class LevelColorManager : Singleton<LevelColorManager>
     {
         ChangeToColor(LevelColor.Green);
     }
+
+    public void ResetToWhite()
+    {
+        if (currentColor != LevelColor.White)
+        {
+            ChangeToColor(LevelColor.White);
+        }
+    }
 }
