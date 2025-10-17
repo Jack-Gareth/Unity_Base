@@ -15,19 +15,19 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (InputManager.Instance != null)
+        if (GameInputManager.Instance != null)
         {
-            InputManager.Instance.OnMoveInput += OnMoveInput;
-            InputManager.Instance.OnJumpInput += OnJumpInput;
+            GameInputManager.Instance.OnMoveInput += OnMoveInput;
+            GameInputManager.Instance.OnJumpInput += OnJumpInput;
         }
     }
 
     private void OnDisable()
     {
-        if (InputManager.Instance != null)
+        if (GameInputManager.Instance != null)
         {
-            InputManager.Instance.OnMoveInput -= OnMoveInput;
-            InputManager.Instance.OnJumpInput -= OnJumpInput;
+            GameInputManager.Instance.OnMoveInput -= OnMoveInput;
+            GameInputManager.Instance.OnJumpInput -= OnJumpInput;
         }
     }
 

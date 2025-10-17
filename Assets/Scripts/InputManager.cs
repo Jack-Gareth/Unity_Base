@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class InputManager : MonoBehaviour
+public class GameInputManager : MonoBehaviour
 {
-    public static InputManager Instance { get; private set; }
+    public static GameInputManager Instance { get; private set; }
     
     [Header("Input Events")]
     public System.Action<Vector2> OnMoveInput;
@@ -11,6 +11,10 @@ public class InputManager : MonoBehaviour
     public System.Action OnRedColorInput;
     public System.Action OnBlueColorInput;
     public System.Action OnGreenColorInput;
+    public System.Action OnYellowColorInput;
+    public System.Action OnPinkColorInput;
+    public System.Action OnBrownColorInput;
+    public System.Action OnGravityFlipInput;
     
     private InputSystem_Actions playerInputActions;
     
@@ -27,7 +31,7 @@ public class InputManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
+    // who
     private void SetupInputActions()
     {
         playerInputActions = new InputSystem_Actions();
@@ -38,6 +42,10 @@ public class InputManager : MonoBehaviour
         playerInputActions.Player.RedColor.performed += OnRedColorPerformed;
         playerInputActions.Player.BlueColor.performed += OnBlueColorPerformed;
         playerInputActions.Player.GreenColor.performed += OnGreenColorPerformed;
+        playerInputActions.Player.YellowColor.performed += OnYellowColorPerformed;
+        playerInputActions.Player.PinkColor.performed += OnPinkColorPerformed;
+        playerInputActions.Player.BrownColor.performed += OnBrownColorPerformed;
+        playerInputActions.Player.GravityFlip.performed += OnGravityFlipPerformed;
     }
     
     private void OnEnable()
@@ -60,6 +68,10 @@ public class InputManager : MonoBehaviour
             playerInputActions.Player.RedColor.performed -= OnRedColorPerformed;
             playerInputActions.Player.BlueColor.performed -= OnBlueColorPerformed;
             playerInputActions.Player.GreenColor.performed -= OnGreenColorPerformed;
+            playerInputActions.Player.YellowColor.performed -= OnYellowColorPerformed;
+            playerInputActions.Player.PinkColor.performed -= OnPinkColorPerformed;
+            playerInputActions.Player.BrownColor.performed -= OnBrownColorPerformed;
+            playerInputActions.Player.GravityFlip.performed -= OnGravityFlipPerformed;
             playerInputActions.Dispose();
         }
     }
@@ -92,5 +104,26 @@ public class InputManager : MonoBehaviour
     private void OnGreenColorPerformed(InputAction.CallbackContext context)
     {
         OnGreenColorInput?.Invoke();
+    }
+    
+    private void OnYellowColorPerformed(InputAction.CallbackContext context)
+    {
+        OnYellowColorInput?.Invoke();
+    }
+    
+    private void OnPinkColorPerformed(InputAction.CallbackContext context)
+    {
+        OnPinkColorInput?.Invoke();
+    }
+    
+    private void OnBrownColorPerformed(InputAction.CallbackContext context)
+    {
+        OnBrownColorInput?.Invoke();
+    }
+    
+    private void OnGravityFlipPerformed(InputAction.CallbackContext context)
+    {
+        Debug.Log("GameInputManager: OnGravityFlipPerformed called - H key pressed!");
+        OnGravityFlipInput?.Invoke();
     }
 }

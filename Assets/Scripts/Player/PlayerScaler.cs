@@ -28,16 +28,22 @@ public class PlayerScaler : MonoBehaviour
     
     private void TrySubscribeToInputManager()
     {
-        Debug.Log("PlayerScaler: TrySubscribeToInputManager called. InputManager.Instance = " + (InputManager.Instance != null));
-        if (InputManager.Instance != null)
+        Debug.Log("PlayerScaler: TrySubscribeToInputManager called. InputManager.Instance = " + (GameInputManager.Instance != null));
+        if (GameInputManager.Instance != null)
         {
-            InputManager.Instance.OnGreenColorInput -= OnGreenColorPressed;
-            InputManager.Instance.OnRedColorInput -= OnOtherColorPressed;
-            InputManager.Instance.OnBlueColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnGreenColorInput -= OnGreenColorPressed;
+            GameInputManager.Instance.OnRedColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnBlueColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnYellowColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnPinkColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnBrownColorInput -= OnOtherColorPressed;
             
-            InputManager.Instance.OnGreenColorInput += OnGreenColorPressed;
-            InputManager.Instance.OnRedColorInput += OnOtherColorPressed;
-            InputManager.Instance.OnBlueColorInput += OnOtherColorPressed;
+            GameInputManager.Instance.OnGreenColorInput += OnGreenColorPressed;
+            GameInputManager.Instance.OnRedColorInput += OnOtherColorPressed;
+            GameInputManager.Instance.OnBlueColorInput += OnOtherColorPressed;
+            GameInputManager.Instance.OnYellowColorInput += OnOtherColorPressed;
+            GameInputManager.Instance.OnPinkColorInput += OnOtherColorPressed;
+            GameInputManager.Instance.OnBrownColorInput += OnOtherColorPressed;
             Debug.Log("PlayerScaler: Successfully subscribed to input events");
         }
         else
@@ -48,11 +54,14 @@ public class PlayerScaler : MonoBehaviour
     
     private void OnDisable()
     {
-        if (InputManager.Instance != null)
+        if (GameInputManager.Instance != null)
         {
-            InputManager.Instance.OnGreenColorInput -= OnGreenColorPressed;
-            InputManager.Instance.OnRedColorInput -= OnOtherColorPressed;
-            InputManager.Instance.OnBlueColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnGreenColorInput -= OnGreenColorPressed;
+            GameInputManager.Instance.OnRedColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnBlueColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnYellowColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnPinkColorInput -= OnOtherColorPressed;
+            GameInputManager.Instance.OnBrownColorInput -= OnOtherColorPressed;
         }
     }
     
