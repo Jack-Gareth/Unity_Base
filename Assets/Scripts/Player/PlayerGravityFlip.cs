@@ -6,7 +6,7 @@ public class PlayerGravityFlip : MonoBehaviour
     
     [Header("Gravity Flip Settings")]
     [SerializeField] private float delayedGravityAction = 0.3f;
-    [SerializeField] private float flippedGravitySpeed = 1f;
+    [SerializeField] private float flippedGravitySpeed = 5f;
     
     private Rigidbody2D rb;
     private bool isGravityFlipped = false;
