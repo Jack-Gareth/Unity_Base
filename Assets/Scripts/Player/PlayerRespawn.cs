@@ -41,10 +41,7 @@ public class PlayerRespawn : MonoBehaviour
             playerRigidbody.angularVelocity = 0f;
         }
 
-        if (playerGravityFlip != null)
-        {
-            playerGravityFlip.ResetGravity();
-        }
+        PlayerEvents.TriggerPlayerRespawn();
 
         if (LevelColorManager.Instance != null)
         {

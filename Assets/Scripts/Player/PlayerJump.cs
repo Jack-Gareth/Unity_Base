@@ -53,11 +53,6 @@ public class PlayerJump : MonoBehaviour
             canJump = true;
         }
 
-        if (LevelColorManager.Instance != null && LevelColorManager.Instance.CurrentColor == LevelColor.Yellow)
-        {
-            return;
-        }
-
         if (isGrounded && canJump && Time.time - lastJumpPressedTime <= jumpBufferTime)
         {
             PerformJump();
@@ -66,10 +61,6 @@ public class PlayerJump : MonoBehaviour
 
     public void TryJump()
     {
-        if (LevelColorManager.Instance != null && LevelColorManager.Instance.CurrentColor == LevelColor.Yellow)
-        {
-            return;
-        }
 
         lastJumpPressedTime = Time.time;
 
