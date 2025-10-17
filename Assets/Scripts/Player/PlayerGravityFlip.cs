@@ -12,10 +12,34 @@ public class PlayerGravityFlip : MonoBehaviour
     private bool isGravityFlipped = false;
     private bool isTransitioning = false;
     private Coroutine flipCoroutine;
+    private float expectedGravityScale;
     
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = NORMAL_GRAVITY;
+        expectedGravityScale = NORMAL_GRAVITY;
+    }
+
+    private void Update()
+    {
+        if (!isTransitioning && isGravityFlipped == false)
+        {
+            if (Mathf.Abs(rb.gravityScale - expectedGravityScale) > 0.01f)
+            {
+                Debug.LogWarning($"Gravity scale mismatch detected! Expected: {expectedGravityScale}, Actual: {rb.gravityScale}. Correcting...");
+                rb.gravityScale = expectedGravityScale;
+            }
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (rb != null && !isGravityFlipped && !isTransitioning)
+        {
+            rb.gravityScale = NORMAL_GRAVITY;
+            expectedGravityScale = NORMAL_GRAVITY;
+        }
     }
     
     private void OnEnable()
@@ -83,11 +107,17 @@ public class PlayerGravityFlip : MonoBehaviour
     
     private void OnNonYellowColorPressed()
     {
-        if (isGravityFlipped)
+        if (flipCoroutine != null)
         {
-            Debug.Log("PlayerGravityFlip: Switching away from Yellow, resetting gravity");
-            ResetGravity();
+            StopCoroutine(flipCoroutine);
         }
+
+        isGravityFlipped = false;
+        isTransitioning = false;
+        rb.gravityScale = NORMAL_GRAVITY;
+        expectedGravityScale = NORMAL_GRAVITY;
+        
+        Debug.Log("PlayerGravityFlip: Switching away from Yellow, resetting gravity to 1");
     }
     
     private void FlipGravity()
@@ -108,12 +138,14 @@ public class PlayerGravityFlip : MonoBehaviour
         {
             Debug.Log("PlayerGravityFlip: Flipping gravity to inverted (falling upward)");
             float targetGravity = -flippedGravitySpeed;
+            expectedGravityScale = targetGravity;
             flipCoroutine = StartCoroutine(SmoothGravityTransition(targetGravity));
         }
         else
         {
             Debug.Log("PlayerGravityFlip: Restoring normal gravity (falling downward)");
             float targetGravity = flippedGravitySpeed;
+            expectedGravityScale = targetGravity;
             flipCoroutine = StartCoroutine(SmoothGravityTransition(targetGravity));
         }
     }
@@ -152,6 +184,7 @@ public class PlayerGravityFlip : MonoBehaviour
             isGravityFlipped = false;
             isTransitioning = false;
             rb.gravityScale = NORMAL_GRAVITY;
+            expectedGravityScale = NORMAL_GRAVITY;
         }
     }
 }

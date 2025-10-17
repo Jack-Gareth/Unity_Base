@@ -2425,6 +2425,7 @@ MonoBehaviour:
     m_Bits: 64
   coyoteTime: 0.05
   jumpBufferTime: 0.05
+  jumpCooldown: 1
 --- !u!114 &1979490561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2462,8 +2463,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6cb10900a015a4e939f9f9d19e4aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayedGravityAction: 0.1
-  flippedGravitySpeed: 3
+  delayedGravityAction: 0
+  flippedGravitySpeed: 5
 --- !u!1 &2045784236
 GameObject:
   m_ObjectHideFlags: 0
