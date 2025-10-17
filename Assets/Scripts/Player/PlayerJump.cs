@@ -21,10 +21,12 @@ public class PlayerJump : MonoBehaviour
     private float lastJumpPressedTime;
     private float lastJumpTime;
     private bool canJump;
+    private PlayerPinkBounce pinkBounce;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        pinkBounce = GetComponent<PlayerPinkBounce>();
         lastJumpPressedTime = -999f;
         lastGroundedTime = -999f;
         lastJumpTime = -999f;
@@ -89,6 +91,11 @@ public class PlayerJump : MonoBehaviour
         lastJumpPressedTime = -999f;
         canJump = false;
         lastJumpTime = Time.time;
+        
+        if (pinkBounce != null)
+        {
+            pinkBounce.NotifyJumpPerformed();
+        }
     }
 
     private void OnDrawGizmosSelected()
