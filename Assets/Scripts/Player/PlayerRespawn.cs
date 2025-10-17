@@ -8,12 +8,14 @@ public class PlayerRespawn : MonoBehaviour
     private Vector3 spawnPosition;
     private Rigidbody2D playerRigidbody;
     private PlayerScaler playerScaler;
+    private PlayerGravityFlip playerGravityFlip;
     
     private void Awake()
     {
         spawnPosition = transform.position;
         playerRigidbody = GetComponent<Rigidbody2D>();
         playerScaler = GetComponent<PlayerScaler>();
+        playerGravityFlip = GetComponent<PlayerGravityFlip>();
     }
     
     private void Update()
@@ -37,6 +39,11 @@ public class PlayerRespawn : MonoBehaviour
         {
             playerRigidbody.linearVelocity = Vector2.zero;
             playerRigidbody.angularVelocity = 0f;
+        }
+
+        if (playerGravityFlip != null)
+        {
+            playerGravityFlip.ResetGravity();
         }
 
         if (LevelColorManager.Instance != null)

@@ -8,6 +8,9 @@ public class LevelColorManager : Singleton<LevelColorManager>
     [SerializeField] private Color blueColor = Color.blue;
     [SerializeField] private Color greenColor = Color.green;
     [SerializeField] private Color whiteColor = Color.white;
+    [SerializeField] private Color yellowColor = Color.yellow;
+    [SerializeField] private Color pinkColor = new Color(1f, 0.75f, 0.8f);
+    [SerializeField] private Color brownColor = new Color(0.6f, 0.4f, 0.2f);
 
     [Header("Shader Settings")]
     [SerializeField] private string colorPropertyName = "_Color";
@@ -24,13 +27,12 @@ public class LevelColorManager : Singleton<LevelColorManager>
     {
         base.Awake();
 
-        // Wait a frame to ensure LevelColorSetup has run first
         StartCoroutine(DelayedSetup());
     }
 
     private System.Collections.IEnumerator DelayedSetup()
     {
-        yield return null; // Wait one frame
+        yield return null;
         FindLevelObjects();
     }
 
@@ -41,16 +43,15 @@ public class LevelColorManager : Singleton<LevelColorManager>
             FindLevelObjects();
         }
 
-        if (InputManager.Instance == null)
+        if (GameInputManager.Instance == null)
         {
-            // InputManager not ready yet, will retry in Update
         }
         TryConnectToInputManager();
     }
 
     private void Update()
     {
-        if (!inputManagerConnected && InputManager.Instance != null)
+        if (!inputManagerConnected && GameInputManager.Instance != null)
         {
             TryConnectToInputManager();
         }
@@ -63,16 +64,19 @@ public class LevelColorManager : Singleton<LevelColorManager>
 
     private void TryConnectToInputManager()
     {
-        if (InputManager.Instance != null && !inputManagerConnected)
+        if (GameInputManager.Instance != null && !inputManagerConnected)
         {
             DisconnectFromInputManager();
 
-            InputManager.Instance.OnRedColorInput += OnRedColorPressed;
-            InputManager.Instance.OnBlueColorInput += OnBlueColorPressed;
-            InputManager.Instance.OnGreenColorInput += OnGreenColorPressed;
+            GameInputManager.Instance.OnRedColorInput += OnRedColorPressed;
+            GameInputManager.Instance.OnBlueColorInput += OnBlueColorPressed;
+            GameInputManager.Instance.OnGreenColorInput += OnGreenColorPressed;
+            GameInputManager.Instance.OnYellowColorInput += OnYellowColorPressed;
+            GameInputManager.Instance.OnPinkColorInput += OnPinkColorPressed;
+            GameInputManager.Instance.OnBrownColorInput += OnBrownColorPressed;
             inputManagerConnected = true;
         }
-        else if (InputManager.Instance == null)
+        else if (GameInputManager.Instance == null)
         {
             inputManagerConnected = false;
         }
@@ -80,11 +84,14 @@ public class LevelColorManager : Singleton<LevelColorManager>
 
     private void DisconnectFromInputManager()
     {
-        if (InputManager.Instance != null && inputManagerConnected)
+        if (GameInputManager.Instance != null && inputManagerConnected)
         {
-            InputManager.Instance.OnRedColorInput -= OnRedColorPressed;
-            InputManager.Instance.OnBlueColorInput -= OnBlueColorPressed;
-            InputManager.Instance.OnGreenColorInput -= OnGreenColorPressed;
+            GameInputManager.Instance.OnRedColorInput -= OnRedColorPressed;
+            GameInputManager.Instance.OnBlueColorInput -= OnBlueColorPressed;
+            GameInputManager.Instance.OnGreenColorInput -= OnGreenColorPressed;
+            GameInputManager.Instance.OnYellowColorInput -= OnYellowColorPressed;
+            GameInputManager.Instance.OnPinkColorInput -= OnPinkColorPressed;
+            GameInputManager.Instance.OnBrownColorInput -= OnBrownColorPressed;
             inputManagerConnected = false;
         }
     }
@@ -94,9 +101,6 @@ public class LevelColorManager : Singleton<LevelColorManager>
         DisconnectFromInputManager();
     }
 
-    /// <summary>
-    /// Finds all level objects and caches their renderers, materials, and colliders
-    /// </summary>
     private void FindLevelObjects()
     {
         GameObject levelParent = GameObject.Find("Level");
@@ -121,9 +125,6 @@ public class LevelColorManager : Singleton<LevelColorManager>
         }
     }
 
-    /// <summary>
-    /// Changes all level objects to the specified color
-    /// </summary>
     private void ChangeToColor(LevelColor targetColor)
     {
         if (currentColor == targetColor)
@@ -149,9 +150,6 @@ public class LevelColorManager : Singleton<LevelColorManager>
         }
     }
 
-    /// <summary>
-    /// Gets the color value for the specified level color
-    /// </summary>
     private Color GetColorValue(LevelColor levelColor)
     {
         return levelColor switch
@@ -159,14 +157,14 @@ public class LevelColorManager : Singleton<LevelColorManager>
             LevelColor.Red => redColor,
             LevelColor.Blue => blueColor,
             LevelColor.Green => greenColor,
+            LevelColor.Yellow => yellowColor,
+            LevelColor.Pink => pinkColor,
+            LevelColor.Brown => brownColor,
             LevelColor.White => whiteColor,
             _ => whiteColor
         };
     }
 
-    /// <summary>
-    /// Applies the color to all level object materials
-    /// </summary>
     private void ApplyColorToAllLevels(Color color)
     {
         for (int i = 0; i < levelMaterials.Length; i++)
@@ -178,9 +176,6 @@ public class LevelColorManager : Singleton<LevelColorManager>
         }
     }
 
-    /// <summary>
-    /// Enables or disables all level object colliders
-    /// </summary>
     private void SetLevelCollidersEnabled(bool enabled)
     {
         for (int i = 0; i < levelColliders.Length; i++)
@@ -205,6 +200,21 @@ public class LevelColorManager : Singleton<LevelColorManager>
     private void OnGreenColorPressed()
     {
         ChangeToColor(LevelColor.Green);
+    }
+
+    private void OnYellowColorPressed()
+    {
+        ChangeToColor(LevelColor.Yellow);
+    }
+
+    private void OnPinkColorPressed()
+    {
+        ChangeToColor(LevelColor.Pink);
+    }
+
+    private void OnBrownColorPressed()
+    {
+        ChangeToColor(LevelColor.Brown);
     }
 
     public void ResetToWhite()
