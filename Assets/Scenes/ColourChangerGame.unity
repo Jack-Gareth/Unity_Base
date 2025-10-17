@@ -2206,6 +2206,7 @@ GameObject:
   - component: {fileID: 1979490561}
   - component: {fileID: 1979490562}
   - component: {fileID: 1979490563}
+  - component: {fileID: 1979490564}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2463,8 +2464,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6cb10900a015a4e939f9f9d19e4aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayedGravityAction: 0
+  delayedGravityAction: 0.1
   flippedGravitySpeed: 5
+--- !u!114 &1979490564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979490552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14d42e99dd5795c42beee542955af146, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bounceForce: 8
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &2045784236
 GameObject:
   m_ObjectHideFlags: 0
