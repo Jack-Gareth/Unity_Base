@@ -2464,8 +2464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6cb10900a015a4e939f9f9d19e4aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delayedGravityAction: 0.1
-  flippedGravitySpeed: 5
+  _groundCheck: {fileID: 61236206}
 --- !u!114 &1979490564
 MonoBehaviour:
   m_ObjectHideFlags: 0
