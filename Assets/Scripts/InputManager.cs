@@ -125,5 +125,6 @@ public class GameInputManager : MonoBehaviour
     {
         Debug.Log("GameInputManager: OnGravityFlipPerformed called - H key pressed!");
         OnGravityFlipInput?.Invoke();
+        PlayerEvents.TriggerGravityFlip();
     }
 }

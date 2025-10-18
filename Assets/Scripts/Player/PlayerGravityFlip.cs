@@ -1,190 +1,66 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerGravityFlip : MonoBehaviour
 {
-    private const float NORMAL_GRAVITY = 1f;
-    
-    [Header("Gravity Flip Settings")]
-    [SerializeField] private float delayedGravityAction = 0.3f;
-    [SerializeField] private float flippedGravitySpeed = 5f;
-    
-    private Rigidbody2D rb;
-    private bool isGravityFlipped = false;
-    private bool isTransitioning = false;
-    private Coroutine flipCoroutine;
-    private float expectedGravityScale;
-    
+    [SerializeField] private Transform _groundCheck;
+
+    private Rigidbody2D _rb;
+    private bool _isFlipped;
+    private Vector3 _normalGroundCheckLocalPos;
+    private Vector3 _invertedGroundCheckLocalPos;
+
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = NORMAL_GRAVITY;
-        expectedGravityScale = NORMAL_GRAVITY;
+        _rb = GetComponent<Rigidbody2D>();
+        _normalGroundCheckLocalPos = _groundCheck.localPosition;
+        _invertedGroundCheckLocalPos = new Vector3(
+            _normalGroundCheckLocalPos.x,
+            -_normalGroundCheckLocalPos.y,
+            _normalGroundCheckLocalPos.z
+        );
     }
 
-    private void Update()
-    {
-        if (!isTransitioning && isGravityFlipped == false)
-        {
-            if (Mathf.Abs(rb.gravityScale - expectedGravityScale) > 0.01f)
-            {
-                Debug.LogWarning($"Gravity scale mismatch detected! Expected: {expectedGravityScale}, Actual: {rb.gravityScale}. Correcting...");
-                rb.gravityScale = expectedGravityScale;
-            }
-        }
-    }
-
-    private void OnValidate()
-    {
-        if (rb != null && !isGravityFlipped && !isTransitioning)
-        {
-            rb.gravityScale = NORMAL_GRAVITY;
-            expectedGravityScale = NORMAL_GRAVITY;
-        }
-    }
-    
     private void OnEnable()
     {
-        Debug.Log("PlayerGravityFlip: OnEnable called. GameInputManager.Instance = " + (GameInputManager.Instance != null));
-        if (GameInputManager.Instance != null)
-        {
-            GameInputManager.Instance.OnGravityFlipInput -= OnGravityFlipPressed;
-            GameInputManager.Instance.OnGravityFlipInput += OnGravityFlipPressed;
-            
-            GameInputManager.Instance.OnRedColorInput -= OnNonYellowColorPressed;
-            GameInputManager.Instance.OnBlueColorInput -= OnNonYellowColorPressed;
-            GameInputManager.Instance.OnGreenColorInput -= OnNonYellowColorPressed;
-            GameInputManager.Instance.OnYellowColorInput -= OnYellowColorPressed;
-            GameInputManager.Instance.OnPinkColorInput -= OnNonYellowColorPressed;
-            GameInputManager.Instance.OnBrownColorInput -= OnNonYellowColorPressed;
-            
-            GameInputManager.Instance.OnRedColorInput += OnNonYellowColorPressed;
-            GameInputManager.Instance.OnBlueColorInput += OnNonYellowColorPressed;
-            GameInputManager.Instance.OnGreenColorInput += OnNonYellowColorPressed;
-            GameInputManager.Instance.OnYellowColorInput += OnYellowColorPressed;
-            GameInputManager.Instance.OnPinkColorInput += OnNonYellowColorPressed;
-            GameInputManager.Instance.OnBrownColorInput += OnNonYellowColorPressed;
-            
-            Debug.Log("PlayerGravityFlip: Successfully subscribed to OnGravityFlipInput");
-        }
+        PlayerEvents.OnGravityFlip += HandleGravityFlip;
+        PlayerEvents.OnColorChanged += HandleColorChange;
+        PlayerEvents.OnPlayerRespawn += ResetGravity;
     }
-    
+
     private void OnDisable()
     {
-        if (GameInputManager.Instance != null)
-        {
-            GameInputManager.Instance.OnGravityFlipInput -= OnGravityFlipPressed;
-            
-            GameInputManager.Instance.OnRedColorInput -= OnNonYellowColorPressed;
-            GameInputManager.Instance.OnBlueColorInput -= OnNonYellowColorPressed;
-            GameInputManager.Instance.OnGreenColorInput -= OnNonYellowColorPressed;
-            GameInputManager.Instance.OnYellowColorInput -= OnYellowColorPressed;
-            GameInputManager.Instance.OnPinkColorInput -= OnNonYellowColorPressed;
-            GameInputManager.Instance.OnBrownColorInput -= OnNonYellowColorPressed;
-        }
+        PlayerEvents.OnGravityFlip -= HandleGravityFlip;
+        PlayerEvents.OnColorChanged -= HandleColorChange;
+        PlayerEvents.OnPlayerRespawn -= ResetGravity;
     }
-    
-    private void OnGravityFlipPressed()
-    {
-        Debug.Log("PlayerGravityFlip: OnGravityFlipPressed called. CurrentColor = " + LevelColorManager.Instance.CurrentColor);
-        if (LevelColorManager.Instance.CurrentColor == LevelColor.Yellow)
-        {
-            FlipGravity();
-        }
-        else
-        {
-            Debug.Log("PlayerGravityFlip: Cannot flip gravity - current color is not Yellow");
-        }
-    }
-    
-    private void OnYellowColorPressed()
-    {
-        if (LevelColorManager.Instance.CurrentColor == LevelColor.Yellow && isGravityFlipped)
-        {
-            Debug.Log("PlayerGravityFlip: Toggling off Yellow while gravity flipped, resetting gravity");
-            ResetGravity();
-        }
-    }
-    
-    private void OnNonYellowColorPressed()
-    {
-        if (flipCoroutine != null)
-        {
-            StopCoroutine(flipCoroutine);
-        }
 
-        isGravityFlipped = false;
-        isTransitioning = false;
-        rb.gravityScale = NORMAL_GRAVITY;
-        expectedGravityScale = NORMAL_GRAVITY;
-        
-        Debug.Log("PlayerGravityFlip: Switching away from Yellow, resetting gravity to 1");
+    private void HandleGravityFlip()
+    {
+        LevelColorManager colorManager = LevelColorManager.Instance;
+        if (colorManager.CurrentColor != LevelColor.Yellow)
+            return;
+
+        FlipGravity();
     }
-    
+
+    private void HandleColorChange(LevelColor newColor)
+    {
+        if (newColor != LevelColor.Yellow && _isFlipped)
+            ResetGravity();
+    }
+
     private void FlipGravity()
     {
-        if (isTransitioning)
-        {
-            return;
-        }
-        
-        isGravityFlipped = !isGravityFlipped;
-        
-        if (flipCoroutine != null)
-        {
-            StopCoroutine(flipCoroutine);
-        }
-        
-        if (isGravityFlipped)
-        {
-            Debug.Log("PlayerGravityFlip: Flipping gravity to inverted (falling upward)");
-            float targetGravity = -flippedGravitySpeed;
-            expectedGravityScale = targetGravity;
-            flipCoroutine = StartCoroutine(SmoothGravityTransition(targetGravity));
-        }
-        else
-        {
-            Debug.Log("PlayerGravityFlip: Restoring normal gravity (falling downward)");
-            float targetGravity = flippedGravitySpeed;
-            expectedGravityScale = targetGravity;
-            flipCoroutine = StartCoroutine(SmoothGravityTransition(targetGravity));
-        }
+        _rb.gravityScale = -_rb.gravityScale;
+        _isFlipped = _rb.gravityScale < 0;
+        _groundCheck.localPosition = _isFlipped ? _invertedGroundCheckLocalPos : _normalGroundCheckLocalPos;
     }
-    
-    private System.Collections.IEnumerator SmoothGravityTransition(float targetGravity)
+
+    private void ResetGravity()
     {
-        isTransitioning = true;
-        
-        float startGravity = rb.gravityScale;
-        float elapsed = 0f;
-        
-        while (elapsed < delayedGravityAction)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / delayedGravityAction;
-            
-            rb.gravityScale = Mathf.Lerp(startGravity, targetGravity, t);
-            
-            yield return null;
-        }
-        
-        rb.gravityScale = targetGravity;
-        
-        isTransitioning = false;
-    }
-    
-    public void ResetGravity()
-    {
-        if (isGravityFlipped)
-        {
-            if (flipCoroutine != null)
-            {
-                StopCoroutine(flipCoroutine);
-            }
-            
-            isGravityFlipped = false;
-            isTransitioning = false;
-            rb.gravityScale = NORMAL_GRAVITY;
-            expectedGravityScale = NORMAL_GRAVITY;
-        }
+        _rb.gravityScale = Mathf.Abs(_rb.gravityScale);
+        _isFlipped = false;
+        _groundCheck.localPosition = _normalGroundCheckLocalPos;
     }
 }
