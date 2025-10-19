@@ -14,7 +14,6 @@ public class GameInputManager : MonoBehaviour
     public System.Action OnYellowColorInput;
     public System.Action OnPinkColorInput;
     public System.Action OnBrownColorInput;
-    public System.Action OnGravityFlipInput;
     public System.Action OnRedPhaseAbilityInput;
 
     private InputSystem_Actions playerInputActions;
@@ -46,7 +45,6 @@ public class GameInputManager : MonoBehaviour
         playerInputActions.Player.YellowColor.performed += OnYellowColorPerformed;
         playerInputActions.Player.PinkColor.performed += OnPinkColorPerformed;
         playerInputActions.Player.BrownColor.performed += OnBrownColorPerformed;
-        playerInputActions.Player.GravityFlip.performed += OnGravityFlipPerformed;
         playerInputActions.Player.RedPhaseAbility.performed += OnRedPhaseAbilityPerformed;
     }
 
@@ -73,7 +71,6 @@ public class GameInputManager : MonoBehaviour
             playerInputActions.Player.YellowColor.performed -= OnYellowColorPerformed;
             playerInputActions.Player.PinkColor.performed -= OnPinkColorPerformed;
             playerInputActions.Player.BrownColor.performed -= OnBrownColorPerformed;
-            playerInputActions.Player.GravityFlip.performed -= OnGravityFlipPerformed;
             playerInputActions.Player.RedPhaseAbility.performed -= OnRedPhaseAbilityPerformed;
             playerInputActions.Dispose();
         }
@@ -124,15 +121,9 @@ public class GameInputManager : MonoBehaviour
         OnBrownColorInput?.Invoke();
     }
 
-    private void OnGravityFlipPerformed(InputAction.CallbackContext context)
-    {
-        Debug.Log("GameInputManager: OnGravityFlipPerformed called - H key pressed!");
-        OnGravityFlipInput?.Invoke();
-        PlayerEvents.TriggerGravityFlip();
-    }
-
     private void OnRedPhaseAbilityPerformed(InputAction.CallbackContext context)
     {
         OnRedPhaseAbilityInput?.Invoke();
+        PlayerEvents.TriggerGravityFlip();
     }
 }
