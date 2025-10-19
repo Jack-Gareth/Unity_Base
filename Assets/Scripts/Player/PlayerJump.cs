@@ -3,13 +3,13 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerJump : MonoBehaviour
 {
-    [SerializeField] private float jumpForce = 10f;
+    private const float JUMP_FORCE = 5f;
 
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundMask;
 
-    [SerializeField] private float coyoteTime = 0.05f; // time after leaving ground when you can still jump
+    [SerializeField] private float coyoteTime = 0.05f;
 
     [SerializeField] private float jumpBufferTime = 0.05f;
 
@@ -73,16 +73,16 @@ public class PlayerJump : MonoBehaviour
     private void PerformJump()
     {
         float jumpDirection = rb.gravityScale < 0 ? -1f : 1f;
-        float adjustedJumpForce = jumpForce * jumpDirection;
-        
-        Debug.Log($"Jump - GravityScale: {rb.gravityScale}, JumpDirection: {jumpDirection}, JumpForce: {jumpForce}, AdjustedJumpForce: {adjustedJumpForce}");
-        
+        float adjustedJumpForce = JUMP_FORCE * jumpDirection;
+
+        Debug.Log($"Jump - GravityScale: {rb.gravityScale}, JumpDirection: {jumpDirection}, JumpForce: {JUMP_FORCE}, AdjustedJumpForce: {adjustedJumpForce}");
+
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, adjustedJumpForce);
         isGrounded = false;
         lastJumpPressedTime = -999f;
         canJump = false;
         lastJumpTime = Time.time;
-        
+
         if (pinkBounce != null)
         {
             pinkBounce.NotifyJumpPerformed();
