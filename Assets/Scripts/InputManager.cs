@@ -15,6 +15,7 @@ public class GameInputManager : MonoBehaviour
     public System.Action OnPinkColorInput;
     public System.Action OnBrownColorInput;
     public System.Action OnRedPhaseAbilityInput;
+    public System.Action OnRedPhaseAbilityReleased;
 
     private InputSystem_Actions playerInputActions;
 
@@ -46,6 +47,7 @@ public class GameInputManager : MonoBehaviour
         playerInputActions.Player.PinkColor.performed += OnPinkColorPerformed;
         playerInputActions.Player.BrownColor.performed += OnBrownColorPerformed;
         playerInputActions.Player.RedPhaseAbility.performed += OnRedPhaseAbilityPerformed;
+        playerInputActions.Player.RedPhaseAbility.canceled += OnRedPhaseAbilityCanceled;
     }
 
     private void OnEnable()
@@ -72,6 +74,7 @@ public class GameInputManager : MonoBehaviour
             playerInputActions.Player.PinkColor.performed -= OnPinkColorPerformed;
             playerInputActions.Player.BrownColor.performed -= OnBrownColorPerformed;
             playerInputActions.Player.RedPhaseAbility.performed -= OnRedPhaseAbilityPerformed;
+            playerInputActions.Player.RedPhaseAbility.canceled -= OnRedPhaseAbilityCanceled;
             playerInputActions.Dispose();
         }
     }
@@ -125,5 +128,10 @@ public class GameInputManager : MonoBehaviour
     {
         OnRedPhaseAbilityInput?.Invoke();
         PlayerEvents.TriggerGravityFlip();
+    }
+
+    private void OnRedPhaseAbilityCanceled(InputAction.CallbackContext context)
+    {
+        OnRedPhaseAbilityReleased?.Invoke();
     }
 }
