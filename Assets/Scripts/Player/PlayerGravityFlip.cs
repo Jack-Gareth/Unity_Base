@@ -1,12 +1,16 @@
 using UnityEngine;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerGravityFlip : MonoBehaviour
 {
     [SerializeField] private Transform _groundCheck;
+    [SerializeField] private float _flipSpeedMultiplier = 5f;   
+    [SerializeField] private float _flipDuration = 1f;       
 
     private Rigidbody2D _rb;
     private bool _isFlipped;
+    private bool _isFlipping;
     private Vector3 _normalGroundCheckLocalPos;
     private Vector3 _invertedGroundCheckLocalPos;
 
@@ -14,10 +18,7 @@ public class PlayerGravityFlip : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _normalGroundCheckLocalPos = _groundCheck.localPosition;
-        _invertedGroundCheckLocalPos = new Vector3(
-            _normalGroundCheckLocalPos.x,
-            -_normalGroundCheckLocalPos.y,
-            _normalGroundCheckLocalPos.z
+        _invertedGroundCheckLocalPos = new Vector3(_normalGroundCheckLocalPos.x, -_normalGroundCheckLocalPos.y,_normalGroundCheckLocalPos.z
         );
     }
 
@@ -37,11 +38,24 @@ public class PlayerGravityFlip : MonoBehaviour
 
     private void HandleGravityFlip()
     {
-        LevelColorManager colorManager = LevelColorManager.Instance;
-        if (colorManager.CurrentColor != LevelColor.Yellow)
+        if (LevelColorManager.Instance.CurrentColor != LevelColor.Yellow)
             return;
 
+        if (!_isFlipping)
+            StartCoroutine(FlipRoutine());
+    }
+
+    private IEnumerator FlipRoutine()
+    {
+        _isFlipping = true;
+  
+        float direction = _isFlipped ? -1f : 1f;
+        _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, direction * _flipSpeedMultiplier);
+
+        yield return new WaitForSeconds(_flipDuration);
+  
         FlipGravity();
+        _isFlipping = false;
     }
 
     private void HandleColorChange(LevelColor newColor)
