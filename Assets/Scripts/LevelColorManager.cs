@@ -148,6 +148,8 @@ public class LevelColorManager : Singleton<LevelColorManager>
             ApplyColorToAllLevels(colorToApply);
             SetLevelCollidersEnabled(true);
         }
+
+        PlayerEvents.TriggerColorChange(currentColor);
     }
 
     private Color GetColorValue(LevelColor levelColor)
