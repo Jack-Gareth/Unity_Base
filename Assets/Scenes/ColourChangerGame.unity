@@ -223,14 +223,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 0
-  redColor: {r: 1, g: 0, b: 0, a: 1}
-  blueColor: {r: 0, g: 0, b: 1, a: 1}
-  greenColor: {r: 0, g: 1, b: 0, a: 1}
+  redColor: {r: 1, g: 0.24056602, b: 0.24056602, a: 1}
+  blueColor: {r: 0.24056602, g: 0.5531828, b: 1, a: 1}
+  greenColor: {r: 0.54163086, g: 0.8490566, b: 0.49261305, a: 1}
   whiteColor: {r: 1, g: 1, b: 1, a: 1}
-  yellowColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  pinkColor: {r: 1, g: 0.75, b: 0.8, a: 1}
-  brownColor: {r: 0.6, g: 0.4, b: 0.2, a: 1}
+  yellowColor: {r: 1, g: 0.8895876, b: 0.4292453, a: 1}
+  pinkColor: {r: 0.8490566, g: 0.3244037, b: 0.62048566, a: 1}
+  brownColor: {r: 0.5921569, g: 0.4392157, b: 0.28627452, a: 1}
   colorPropertyName: _Color
+  redPhaseDuration: 1
 --- !u!1 &187039754
 GameObject:
   m_ObjectHideFlags: 0
@@ -1891,7 +1892,7 @@ GameObject:
   - component: {fileID: 1907390216}
   - component: {fileID: 1907390215}
   - component: {fileID: 1907390214}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2311,7 +2312,7 @@ Transform:
   m_GameObject: {fileID: 1979490552}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.03, y: -2.43, z: 0}
+  m_LocalPosition: {x: -7.88, y: -3.89, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
