@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 
 public class LevelColorManager : Singleton<LevelColorManager>
 {
@@ -15,11 +16,16 @@ public class LevelColorManager : Singleton<LevelColorManager>
     [Header("Shader Settings")]
     [SerializeField] private string colorPropertyName = "_Color";
 
+    [Header("Red Phase Ability Settings")]
+    [SerializeField] private float redPhaseDuration = 1f;
+
     private SpriteRenderer[] levelRenderers;
     private Material[] levelMaterials;
     private BoxCollider2D[] levelColliders;
     private LevelColor currentColor = LevelColor.White;
     private bool inputManagerConnected = false;
+    private bool isRedPhaseActive = false;
+    private Coroutine redPhaseCoroutine;
 
     public LevelColor CurrentColor => currentColor;
 
@@ -60,6 +66,7 @@ public class LevelColorManager : Singleton<LevelColorManager>
     private void OnEnable()
     {
         TryConnectToInputManager();
+        PlayerEvents.OnPlayerRespawn += HandlePlayerRespawn;
     }
 
     private void TryConnectToInputManager()
@@ -74,6 +81,7 @@ public class LevelColorManager : Singleton<LevelColorManager>
             GameInputManager.Instance.OnYellowColorInput += OnYellowColorPressed;
             GameInputManager.Instance.OnPinkColorInput += OnPinkColorPressed;
             GameInputManager.Instance.OnBrownColorInput += OnBrownColorPressed;
+            GameInputManager.Instance.OnRedPhaseAbilityInput += OnRedPhaseAbilityPressed;
             inputManagerConnected = true;
         }
         else if (GameInputManager.Instance == null)
@@ -92,6 +100,7 @@ public class LevelColorManager : Singleton<LevelColorManager>
             GameInputManager.Instance.OnYellowColorInput -= OnYellowColorPressed;
             GameInputManager.Instance.OnPinkColorInput -= OnPinkColorPressed;
             GameInputManager.Instance.OnBrownColorInput -= OnBrownColorPressed;
+            GameInputManager.Instance.OnRedPhaseAbilityInput -= OnRedPhaseAbilityPressed;
             inputManagerConnected = false;
         }
     }
@@ -99,6 +108,7 @@ public class LevelColorManager : Singleton<LevelColorManager>
     private void OnDisable()
     {
         DisconnectFromInputManager();
+        PlayerEvents.OnPlayerRespawn -= HandlePlayerRespawn;
     }
 
     private void FindLevelObjects()
@@ -136,20 +146,35 @@ public class LevelColorManager : Singleton<LevelColorManager>
         Color colorToApply = GetColorValue(targetColor);
         currentColor = targetColor;
 
-        if (targetColor == LevelColor.Red)
+        colorToApply.a = 1.0f;
+        ApplyColorToAllLevels(colorToApply);
+        SetLevelCollidersEnabled(true);
+
+        PlayerEvents.TriggerColorChange(currentColor);
+    }
+
+    private IEnumerator RedPhaseAbility()
+    {
+        isRedPhaseActive = true;
+
+        Color redColorTransparent = redColor;
+        redColorTransparent.a = 0.5f;
+        ApplyColorToAllLevels(redColorTransparent);
+        SetLevelCollidersEnabled(false);
+
+        yield return new WaitForSecondsRealtime(redPhaseDuration);
+
+        isRedPhaseActive = false;
+
+        if (currentColor == LevelColor.Red)
         {
-            colorToApply.a = 0.5f;
-            ApplyColorToAllLevels(colorToApply);
-            SetLevelCollidersEnabled(false);
-        }
-        else
-        {
-            colorToApply.a = 1.0f;
-            ApplyColorToAllLevels(colorToApply);
+            Color redColorSolid = redColor;
+            redColorSolid.a = 1.0f;
+            ApplyColorToAllLevels(redColorSolid);
             SetLevelCollidersEnabled(true);
         }
 
-        PlayerEvents.TriggerColorChange(currentColor);
+        redPhaseCoroutine = null;
     }
 
     private Color GetColorValue(LevelColor levelColor)
@@ -217,6 +242,37 @@ public class LevelColorManager : Singleton<LevelColorManager>
     private void OnBrownColorPressed()
     {
         ChangeToColor(LevelColor.Brown);
+    }
+
+    private void OnRedPhaseAbilityPressed()
+    {
+        if (currentColor == LevelColor.Red)
+        {
+            if (redPhaseCoroutine != null)
+            {
+                StopCoroutine(redPhaseCoroutine);
+            }
+            redPhaseCoroutine = StartCoroutine(RedPhaseAbility());
+        }
+    }
+
+    private void HandlePlayerRespawn()
+    {
+        if (redPhaseCoroutine != null)
+        {
+            StopCoroutine(redPhaseCoroutine);
+            redPhaseCoroutine = null;
+        }
+
+        isRedPhaseActive = false;
+        currentColor = LevelColor.White;
+
+        Color whiteColorSolid = whiteColor;
+        whiteColorSolid.a = 1.0f;
+        ApplyColorToAllLevels(whiteColorSolid);
+        SetLevelCollidersEnabled(true);
+
+        PlayerEvents.TriggerColorChange(currentColor);
     }
 
     public void ResetToWhite()

@@ -234,6 +234,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RedPhaseAbility"",
+                    ""type"": ""Button"",
+                    ""id"": ""eecf0277-60da-4b30-934f-265cc782b1e0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -696,6 +705,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""GravityFlip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""00ce49fc-973f-42e0-b4f6-807145502b73"",
+                    ""path"": ""<Keyboard>/g"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RedPhaseAbility"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1299,6 +1319,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_PinkColor = m_Player.FindAction("PinkColor", throwIfNotFound: true);
         m_Player_BrownColor = m_Player.FindAction("BrownColor", throwIfNotFound: true);
         m_Player_GravityFlip = m_Player.FindAction("GravityFlip", throwIfNotFound: true);
+        m_Player_RedPhaseAbility = m_Player.FindAction("RedPhaseAbility", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1408,6 +1429,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_PinkColor;
     private readonly InputAction m_Player_BrownColor;
     private readonly InputAction m_Player_GravityFlip;
+    private readonly InputAction m_Player_RedPhaseAbility;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1484,6 +1506,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @GravityFlip => m_Wrapper.m_Player_GravityFlip;
         /// <summary>
+        /// Provides access to the underlying input action "Player/RedPhaseAbility".
+        /// </summary>
+        public InputAction @RedPhaseAbility => m_Wrapper.m_Player_RedPhaseAbility;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -1557,6 +1583,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @GravityFlip.started += instance.OnGravityFlip;
             @GravityFlip.performed += instance.OnGravityFlip;
             @GravityFlip.canceled += instance.OnGravityFlip;
+            @RedPhaseAbility.started += instance.OnRedPhaseAbility;
+            @RedPhaseAbility.performed += instance.OnRedPhaseAbility;
+            @RedPhaseAbility.canceled += instance.OnRedPhaseAbility;
         }
 
         /// <summary>
@@ -1616,6 +1645,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @GravityFlip.started -= instance.OnGravityFlip;
             @GravityFlip.performed -= instance.OnGravityFlip;
             @GravityFlip.canceled -= instance.OnGravityFlip;
+            @RedPhaseAbility.started -= instance.OnRedPhaseAbility;
+            @RedPhaseAbility.performed -= instance.OnRedPhaseAbility;
+            @RedPhaseAbility.canceled -= instance.OnRedPhaseAbility;
         }
 
         /// <summary>
@@ -2028,6 +2060,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnGravityFlip(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RedPhaseAbility" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRedPhaseAbility(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
