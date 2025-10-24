@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &30746486
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1586,6 +1586,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EducationalPopupBox
       objectReference: {fileID: 0}
+    - target: {fileID: 5525772399537098842, guid: fd5cb6fa5332a84438f1d786f8e21cb6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5525772399537098843, guid: fd5cb6fa5332a84438f1d786f8e21cb6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2023,8 +2027,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2990,7 +2994,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 4
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -3119,7 +3123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14d42e99dd5795c42beee542955af146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounceForce: 8
+  bounceForce: 10
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
