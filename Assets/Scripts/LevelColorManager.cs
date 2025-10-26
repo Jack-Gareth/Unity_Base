@@ -113,17 +113,33 @@ public class LevelColorManager : Singleton<LevelColorManager>
 
     private void FindLevelObjects()
     {
-        GameObject levelParent = GameObject.Find("Level");
-        if (levelParent == null)
+        int groundLayer = LayerMask.NameToLayer("Ground");
+        int wallLayer = LayerMask.NameToLayer("Wall");
+
+        SpriteRenderer[] allRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
+        BoxCollider2D[] allColliders = FindObjectsByType<BoxCollider2D>(FindObjectsSortMode.None);
+
+        System.Collections.Generic.List<SpriteRenderer> levelRenderersList = new System.Collections.Generic.List<SpriteRenderer>();
+        System.Collections.Generic.List<BoxCollider2D> levelCollidersList = new System.Collections.Generic.List<BoxCollider2D>();
+
+        foreach (SpriteRenderer renderer in allRenderers)
         {
-            return;
+            if (renderer.gameObject.layer == groundLayer || renderer.gameObject.layer == wallLayer)
+            {
+                levelRenderersList.Add(renderer);
+            }
         }
 
-        SpriteRenderer[] allRenderers = levelParent.GetComponentsInChildren<SpriteRenderer>();
-        BoxCollider2D[] allColliders = levelParent.GetComponentsInChildren<BoxCollider2D>();
+        foreach (BoxCollider2D collider in allColliders)
+        {
+            if (collider.gameObject.layer == groundLayer || collider.gameObject.layer == wallLayer)
+            {
+                levelCollidersList.Add(collider);
+            }
+        }
 
-        levelRenderers = allRenderers;
-        levelColliders = allColliders;
+        levelRenderers = levelRenderersList.ToArray();
+        levelColliders = levelCollidersList.ToArray();
         levelMaterials = new Material[levelRenderers.Length];
 
         for (int i = 0; i < levelRenderers.Length; i++)
