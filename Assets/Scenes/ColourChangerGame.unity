@@ -1925,27 +1925,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1716893020}
-  - component: {fileID: 1716893019}
+  - component: {fileID: 1716893021}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: AudioEvents
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1716893019
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1716893018}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36a78a1ad668c41409925476f5a7fd83, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  popupLibrary: {fileID: 11400000, guid: a8649322d4c68c241972b96e6f096fc8, type: 2}
 --- !u!4 &1716893020
 Transform:
   m_ObjectHideFlags: 0
@@ -1955,12 +1942,25 @@ Transform:
   m_GameObject: {fileID: 1716893018}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.1591944, y: -0.08517876, z: 35.626156}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1716893021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716893018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1ea2e4adf5c11b47bf6f4c3962e84e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 1
 --- !u!1 &1736198258
 GameObject:
   m_ObjectHideFlags: 0
@@ -2924,7 +2924,7 @@ Transform:
   m_GameObject: {fileID: 1979490552}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.84, y: -3.8, z: 0}
+  m_LocalPosition: {x: -6.2, y: -3.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3004,7 +3004,7 @@ Rigidbody2D:
     m_Bits: 0
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!114 &1979490557
 MonoBehaviour:
@@ -3064,14 +3064,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34ca519d0625b164d89d8f76932723c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  JUMP_FORCE: 10
   groundCheck: {fileID: 61236206}
   groundCheckRadius: 0.2
   groundMask:
     serializedVersion: 2
     m_Bits: 64
   coyoteTime: 0.05
-  jumpBufferTime: 0.05
-  jumpCooldown: 1
+  jumpBufferTime: 0.02
+  jumpCooldown: 0.5
 --- !u!114 &1979490561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3123,7 +3124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14d42e99dd5795c42beee542955af146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounceForce: 10
+  bounceForce: 16
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
