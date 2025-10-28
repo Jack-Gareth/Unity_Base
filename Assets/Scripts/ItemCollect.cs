@@ -80,6 +80,11 @@ public class ItemCollect : MonoBehaviour
             Instantiate(collectEffect, transform.position, Quaternion.identity);
         }
 
+        if (ItemCollectionManager.Instance != null)
+        {
+            ItemCollectionManager.Instance.CollectItem();
+        }
+
         HideItem();
     }
 
