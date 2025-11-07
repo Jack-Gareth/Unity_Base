@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
      private PlayerMovement movement;
      private PlayerJump jump;
      private PlayerWallClimb wallClimb;
+     private bool isSubscribed = false;
 
     private void Awake()
     {
@@ -13,21 +14,36 @@ public class PlayerController : MonoBehaviour
         wallClimb = GetComponent<PlayerWallClimb>();
     }
 
+    private void Start()
+    {
+        SubscribeToInputManager();
+    }
+
     private void OnEnable()
     {
+        SubscribeToInputManager();
+    }
+
+    private void SubscribeToInputManager()
+    {
+        if (isSubscribed)
+            return;
+
         if (GameInputManager.Instance != null)
         {
             GameInputManager.Instance.OnMoveInput += OnMoveInput;
             GameInputManager.Instance.OnJumpInput += OnJumpInput;
+            isSubscribed = true;
         }
     }
 
     private void OnDisable()
     {
-        if (GameInputManager.Instance != null)
+        if (GameInputManager.Instance != null && isSubscribed)
         {
             GameInputManager.Instance.OnMoveInput -= OnMoveInput;
             GameInputManager.Instance.OnJumpInput -= OnJumpInput;
+            isSubscribed = false;
         }
     }
 
