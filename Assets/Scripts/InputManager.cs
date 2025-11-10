@@ -16,6 +16,10 @@ public class GameInputManager : MonoBehaviour
     public System.Action OnBrownColorInput;
     public System.Action OnRedPhaseAbilityInput;
     public System.Action OnRedPhaseAbilityReleased;
+    public System.Action OnCycleColorLeftInput;
+    public System.Action OnCycleColorRightInput;
+    public System.Action OnActivateAbilityInput;
+    public System.Action OnResetToWhiteInput;
 
     private InputSystem_Actions playerInputActions;
 
@@ -48,6 +52,10 @@ public class GameInputManager : MonoBehaviour
         playerInputActions.Player.BrownColor.performed += OnBrownColorPerformed;
         playerInputActions.Player.RedPhaseAbility.performed += OnRedPhaseAbilityPerformed;
         playerInputActions.Player.RedPhaseAbility.canceled += OnRedPhaseAbilityCanceled;
+        playerInputActions.Player.CycleColorLeft.performed += OnCycleColorLeftPerformed;
+        playerInputActions.Player.CycleColorRight.performed += OnCycleColorRightPerformed;
+        playerInputActions.Player.ActivateAbility.performed += OnActivateAbilityPerformed;
+        playerInputActions.Player.ResetToWhite.performed += OnResetToWhitePerformed;
     }
 
     private void OnEnable()
@@ -75,6 +83,10 @@ public class GameInputManager : MonoBehaviour
             playerInputActions.Player.BrownColor.performed -= OnBrownColorPerformed;
             playerInputActions.Player.RedPhaseAbility.performed -= OnRedPhaseAbilityPerformed;
             playerInputActions.Player.RedPhaseAbility.canceled -= OnRedPhaseAbilityCanceled;
+            playerInputActions.Player.CycleColorLeft.performed -= OnCycleColorLeftPerformed;
+            playerInputActions.Player.CycleColorRight.performed -= OnCycleColorRightPerformed;
+            playerInputActions.Player.ActivateAbility.performed -= OnActivateAbilityPerformed;
+            playerInputActions.Player.ResetToWhite.performed -= OnResetToWhitePerformed;
             playerInputActions.Dispose();
         }
     }
@@ -133,5 +145,27 @@ public class GameInputManager : MonoBehaviour
     private void OnRedPhaseAbilityCanceled(InputAction.CallbackContext context)
     {
         OnRedPhaseAbilityReleased?.Invoke();
+    }
+
+    private void OnCycleColorLeftPerformed(InputAction.CallbackContext context)
+    {
+        OnCycleColorLeftInput?.Invoke();
+    }
+
+    private void OnCycleColorRightPerformed(InputAction.CallbackContext context)
+    {
+        OnCycleColorRightInput?.Invoke();
+    }
+
+    private void OnActivateAbilityPerformed(InputAction.CallbackContext context)
+    {
+        OnActivateAbilityInput?.Invoke();
+        OnRedPhaseAbilityInput?.Invoke();
+        PlayerEvents.TriggerGravityFlip();
+    }
+
+    private void OnResetToWhitePerformed(InputAction.CallbackContext context)
+    {
+        OnResetToWhiteInput?.Invoke();
     }
 }

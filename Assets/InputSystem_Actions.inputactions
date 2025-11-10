@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "InputSystem_Actions",
     "maps": [
         {
@@ -153,6 +154,42 @@
                     "name": "RedPhaseAbility",
                     "type": "Button",
                     "id": "eecf0277-60da-4b30-934f-265cc782b1e0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CycleColorLeft",
+                    "type": "Button",
+                    "id": "15a1e967-0102-4c7f-b79f-7022ecf4ea85",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CycleColorRight",
+                    "type": "Button",
+                    "id": "ec41d97f-cedd-4736-b6b9-3aeb830dc1b7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ActivateAbility",
+                    "type": "Button",
+                    "id": "953f05c4-92d0-4bdb-88a6-9ca93625cfec",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ResetToWhite",
+                    "type": "Button",
+                    "id": "5f3b0e9c-cc38-4f3d-9901-c10de2b350a2",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -630,6 +667,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "RedPhaseAbility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "72427b48-c698-4ef0-833f-02f07240ea1e",
+                    "path": "<DualShockGamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "CycleColorLeft",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9450aa59-c2ca-4345-b1d9-b1728920f5d7",
+                    "path": "<DualShockGamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "CycleColorRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "96e1a7d7-c0c3-420f-820b-b91c5190e654",
+                    "path": "<DualShockGamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ActivateAbility",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0479c3da-777f-4dad-987d-a8fd02c0672c",
+                    "path": "<DualShockGamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "ResetToWhite",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
