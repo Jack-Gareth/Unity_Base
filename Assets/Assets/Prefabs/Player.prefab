@@ -159,6 +159,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -180,6 +182,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -291,7 +294,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34ca519d0625b164d89d8f76932723c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JUMP_FORCE: 10
+  JUMP_FORCE: 14
   groundCheck: {fileID: 4407057339918942768}
   groundCheckRadius: 0.2
   groundMask:
@@ -331,7 +334,7 @@ MonoBehaviour:
   wallMask:
     serializedVersion: 2
     m_Bits: 128
-  climbSpeed: 3
+  climbSpeed: 6
   wallJumpForce: 8
   wallJumpDirection: {x: 1, y: 1}
 --- !u!114 &7804789684518472943
@@ -359,6 +362,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathBoundaryY: -50
+  useTransitionOnDeath: 1
+  blackScreenDuration: 0.1
 --- !u!114 &3359667844197248274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,7 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14d42e99dd5795c42beee542955af146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounceForce: 16
+  bounceForce: 18
   groundLayer:
     serializedVersion: 2
     m_Bits: 64

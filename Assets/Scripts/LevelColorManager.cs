@@ -26,6 +26,16 @@ public class LevelColorManager : Singleton<LevelColorManager>
     private bool inputManagerConnected = false;
     private bool isRedPhaseActive = false;
     private Coroutine redPhaseCoroutine;
+    
+    private readonly LevelColor[] cyclableColors = new LevelColor[]
+    {
+        LevelColor.Red,
+        LevelColor.Blue,
+        LevelColor.Green,
+        LevelColor.Yellow,
+        LevelColor.Pink,
+        LevelColor.Brown
+    };
 
     public LevelColor CurrentColor => currentColor;
 
@@ -82,6 +92,10 @@ public class LevelColorManager : Singleton<LevelColorManager>
             GameInputManager.Instance.OnPinkColorInput += OnPinkColorPressed;
             GameInputManager.Instance.OnBrownColorInput += OnBrownColorPressed;
             GameInputManager.Instance.OnRedPhaseAbilityInput += OnRedPhaseAbilityPressed;
+            GameInputManager.Instance.OnCycleColorLeftInput += OnCycleColorLeft;
+            GameInputManager.Instance.OnCycleColorRightInput += OnCycleColorRight;
+            GameInputManager.Instance.OnActivateAbilityInput += OnActivateAbility;
+            GameInputManager.Instance.OnResetToWhiteInput += OnResetToWhitePressed;
             inputManagerConnected = true;
         }
         else if (GameInputManager.Instance == null)
@@ -101,6 +115,10 @@ public class LevelColorManager : Singleton<LevelColorManager>
             GameInputManager.Instance.OnPinkColorInput -= OnPinkColorPressed;
             GameInputManager.Instance.OnBrownColorInput -= OnBrownColorPressed;
             GameInputManager.Instance.OnRedPhaseAbilityInput -= OnRedPhaseAbilityPressed;
+            GameInputManager.Instance.OnCycleColorLeftInput -= OnCycleColorLeft;
+            GameInputManager.Instance.OnCycleColorRightInput -= OnCycleColorRight;
+            GameInputManager.Instance.OnActivateAbilityInput -= OnActivateAbility;
+            GameInputManager.Instance.OnResetToWhiteInput -= OnResetToWhitePressed;
             inputManagerConnected = false;
         }
     }
@@ -297,5 +315,63 @@ public class LevelColorManager : Singleton<LevelColorManager>
         {
             ChangeToColor(LevelColor.White);
         }
+    }
+
+    private void OnCycleColorLeft()
+    {
+        CycleColor(-1);
+    }
+
+    private void OnCycleColorRight()
+    {
+        CycleColor(1);
+    }
+
+    private void OnActivateAbility()
+    {
+        OnRedPhaseAbilityPressed();
+    }
+
+    private void OnResetToWhitePressed()
+    {
+        ResetToWhite();
+    }
+
+    private void CycleColor(int direction)
+    {
+        int currentIndex = System.Array.IndexOf(cyclableColors, currentColor);
+        
+        if (currentIndex == -1)
+        {
+            currentIndex = 0;
+        }
+        else
+        {
+            currentIndex += direction;
+            
+            if (currentIndex < 0)
+            {
+                currentIndex = cyclableColors.Length - 1;
+            }
+            else if (currentIndex >= cyclableColors.Length)
+            {
+                currentIndex = 0;
+            }
+        }
+        
+        LevelColor targetColor = cyclableColors[currentIndex];
+        SetToColorDirectly(targetColor);
+    }
+
+    private void SetToColorDirectly(LevelColor targetColor)
+    {
+        Color colorToApply = GetColorValue(targetColor);
+        currentColor = targetColor;
+
+        colorToApply.a = 1.0f;
+        ApplyColorToAllLevels(colorToApply);
+        SetLevelCollidersEnabled(true);
+
+        PlayerEvents.TriggerColorChange(currentColor);
     }
 }
