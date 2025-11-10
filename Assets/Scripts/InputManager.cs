@@ -20,6 +20,7 @@ public class GameInputManager : MonoBehaviour
     public System.Action OnCycleColorRightInput;
     public System.Action OnActivateAbilityInput;
     public System.Action OnResetToWhiteInput;
+    public System.Action OnContinueDialogueInput;
 
     private InputSystem_Actions playerInputActions;
 
@@ -56,6 +57,7 @@ public class GameInputManager : MonoBehaviour
         playerInputActions.Player.CycleColorRight.performed += OnCycleColorRightPerformed;
         playerInputActions.Player.ActivateAbility.performed += OnActivateAbilityPerformed;
         playerInputActions.Player.ResetToWhite.performed += OnResetToWhitePerformed;
+        playerInputActions.Player.ContinueDialogue.performed += OnContinueDialoguePerformed;
     }
 
     private void OnEnable()
@@ -87,6 +89,7 @@ public class GameInputManager : MonoBehaviour
             playerInputActions.Player.CycleColorRight.performed -= OnCycleColorRightPerformed;
             playerInputActions.Player.ActivateAbility.performed -= OnActivateAbilityPerformed;
             playerInputActions.Player.ResetToWhite.performed -= OnResetToWhitePerformed;
+            playerInputActions.Player.ContinueDialogue.performed -= OnContinueDialoguePerformed;
             playerInputActions.Dispose();
         }
     }
@@ -167,5 +170,10 @@ public class GameInputManager : MonoBehaviour
     private void OnResetToWhitePerformed(InputAction.CallbackContext context)
     {
         OnResetToWhiteInput?.Invoke();
+    }
+
+    private void OnContinueDialoguePerformed(InputAction.CallbackContext context)
+    {
+        OnContinueDialogueInput?.Invoke();
     }
 }

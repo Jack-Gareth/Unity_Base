@@ -23,6 +23,30 @@ public class PopupPanel : TypeWriterText, IPointerClickHandler
         audioSource = GetComponent<AudioSource>();
     }
 
+    private void OnEnable()
+    {
+        if (GameInputManager.Instance != null)
+        {
+            GameInputManager.Instance.OnContinueDialogueInput += OnControllerContinue;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (GameInputManager.Instance != null)
+        {
+            GameInputManager.Instance.OnContinueDialogueInput -= OnControllerContinue;
+        }
+    }
+
+    private void OnControllerContinue()
+    {
+        if (panelCanvas.isShowing)
+        {
+            Continue();
+        }
+    }
+
     private void Start()
     {
         continueIcon.enabled = false;

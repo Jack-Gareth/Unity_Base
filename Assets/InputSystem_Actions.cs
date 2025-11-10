@@ -280,6 +280,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ContinueDialogue"",
+                    ""type"": ""Button"",
+                    ""id"": ""f2eb1872-aac5-440c-aa7c-e8b78668bf09"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -797,6 +806,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""ResetToWhite"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""12bda512-9885-436d-b01c-f22ce2d4a62c"",
+                    ""path"": ""<DualShockGamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ContinueDialogue"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1405,6 +1425,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_CycleColorRight = m_Player.FindAction("CycleColorRight", throwIfNotFound: true);
         m_Player_ActivateAbility = m_Player.FindAction("ActivateAbility", throwIfNotFound: true);
         m_Player_ResetToWhite = m_Player.FindAction("ResetToWhite", throwIfNotFound: true);
+        m_Player_ContinueDialogue = m_Player.FindAction("ContinueDialogue", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1519,6 +1540,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_CycleColorRight;
     private readonly InputAction m_Player_ActivateAbility;
     private readonly InputAction m_Player_ResetToWhite;
+    private readonly InputAction m_Player_ContinueDialogue;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1615,6 +1637,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ResetToWhite => m_Wrapper.m_Player_ResetToWhite;
         /// <summary>
+        /// Provides access to the underlying input action "Player/ContinueDialogue".
+        /// </summary>
+        public InputAction @ContinueDialogue => m_Wrapper.m_Player_ContinueDialogue;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -1703,6 +1729,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ResetToWhite.started += instance.OnResetToWhite;
             @ResetToWhite.performed += instance.OnResetToWhite;
             @ResetToWhite.canceled += instance.OnResetToWhite;
+            @ContinueDialogue.started += instance.OnContinueDialogue;
+            @ContinueDialogue.performed += instance.OnContinueDialogue;
+            @ContinueDialogue.canceled += instance.OnContinueDialogue;
         }
 
         /// <summary>
@@ -1777,6 +1806,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ResetToWhite.started -= instance.OnResetToWhite;
             @ResetToWhite.performed -= instance.OnResetToWhite;
             @ResetToWhite.canceled -= instance.OnResetToWhite;
+            @ContinueDialogue.started -= instance.OnContinueDialogue;
+            @ContinueDialogue.performed -= instance.OnContinueDialogue;
+            @ContinueDialogue.canceled -= instance.OnContinueDialogue;
         }
 
         /// <summary>
@@ -2224,6 +2256,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnResetToWhite(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "ContinueDialogue" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnContinueDialogue(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
