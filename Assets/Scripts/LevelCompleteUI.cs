@@ -132,15 +132,22 @@ public class LevelCompleteUI : MonoBehaviour
 
     public void LoadNextLevel()
     {
-        if (SwipeTransition.Instance != null)
+        if (LevelProgressionManager.Instance != null)
         {
-            SwipeTransition.Instance.RestartCurrentScene();
+            LevelProgressionManager.Instance.LoadNextLevel();
         }
         else
         {
-            Debug.LogWarning("SwipeTransition not found! Loading without transition...");
-            Scene currentScene = SceneManager.GetActiveScene();
-            SceneManager.LoadScene(currentScene.name);
+            Debug.LogWarning("LevelProgressionManager not found! Restarting current scene...");
+            if (SwipeTransition.Instance != null)
+            {
+                SwipeTransition.Instance.RestartCurrentScene();
+            }
+            else
+            {
+                Scene currentScene = SceneManager.GetActiveScene();
+                SceneManager.LoadScene(currentScene.name);
+            }
         }
     }
 }
