@@ -22,6 +22,8 @@ public class SwipeTransition : MonoBehaviour
     private Vector2 onScreen;
     private Vector2 offScreenRight;
 
+    private bool isTransitioning = false;
+
     private void Awake()
     {
         if (Instance == null)
@@ -84,22 +86,78 @@ public class SwipeTransition : MonoBehaviour
 
     public void TransitionToScene(string sceneName)
     {
-        StartCoroutine(TransitionSequence(() => SceneManager.LoadScene(sceneName)));
+        if (!isTransitioning)
+        {
+            StartCoroutine(TransitionSequence(() => SceneManager.LoadScene(sceneName)));
+        }
     }
 
     public void TransitionToScene(int sceneIndex)
     {
-        StartCoroutine(TransitionSequence(() => SceneManager.LoadScene(sceneIndex)));
+        if (!isTransitioning)
+        {
+            StartCoroutine(TransitionSequence(() => SceneManager.LoadScene(sceneIndex)));
+        }
     }
 
     public void RestartCurrentScene()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        StartCoroutine(TransitionSequence(() => SceneManager.LoadScene(currentScene.buildIndex)));
+        if (!isTransitioning)
+        {
+            Scene currentScene = SceneManager.GetActiveScene();
+            StartCoroutine(TransitionSequence(() => SceneManager.LoadScene(currentScene.buildIndex)));
+        }
+    }
+
+    public void PlayTransitionEffect(Action onBlackScreen)
+    {
+        if (!isTransitioning)
+        {
+            StartCoroutine(TransitionEffectOnly(onBlackScreen, blackScreenDuration));
+        }
+    }
+
+    public void PlayTransitionEffect(Action onBlackScreen, float customBlackScreenDuration)
+    {
+        if (!isTransitioning)
+        {
+            StartCoroutine(TransitionEffectOnly(onBlackScreen, customBlackScreenDuration));
+        }
+    }
+
+    private IEnumerator TransitionEffectOnly(Action onBlackScreen, float blackDuration)
+    {
+        isTransitioning = true;
+
+        if (blackImage != null)
+        {
+            blackImage.enabled = true;
+        }
+
+        transitionPanel.anchoredPosition = offScreenLeft;
+
+        yield return StartCoroutine(AnimatePosition(offScreenLeft, onScreen, swipeDuration));
+
+        onBlackScreen?.Invoke();
+
+        yield return new WaitForSecondsRealtime(blackDuration);
+
+        yield return StartCoroutine(AnimatePosition(onScreen, offScreenRight, swipeDuration));
+
+        if (blackImage != null)
+        {
+            blackImage.enabled = false;
+        }
+        
+        transitionPanel.anchoredPosition = offScreenLeft;
+
+        isTransitioning = false;
     }
 
     private IEnumerator TransitionSequence(Action onBlackScreen)
     {
+        isTransitioning = true;
+
         if (blackImage != null)
         {
             blackImage.enabled = true;
@@ -121,6 +179,8 @@ public class SwipeTransition : MonoBehaviour
         }
         
         transitionPanel.anchoredPosition = offScreenLeft;
+
+        isTransitioning = false;
     }
 
     private IEnumerator AnimatePosition(Vector2 from, Vector2 to, float duration)

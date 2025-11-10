@@ -21,6 +21,7 @@ public class GameInputManager : MonoBehaviour
     public System.Action OnActivateAbilityInput;
     public System.Action OnResetToWhiteInput;
     public System.Action OnContinueDialogueInput;
+    public System.Action OnConfirmInput;
 
     private InputSystem_Actions playerInputActions;
 
@@ -58,6 +59,7 @@ public class GameInputManager : MonoBehaviour
         playerInputActions.Player.ActivateAbility.performed += OnActivateAbilityPerformed;
         playerInputActions.Player.ResetToWhite.performed += OnResetToWhitePerformed;
         playerInputActions.Player.ContinueDialogue.performed += OnContinueDialoguePerformed;
+        playerInputActions.Player.Confirm.performed += OnConfirmPerformed;
     }
 
     private void OnEnable()
@@ -90,6 +92,7 @@ public class GameInputManager : MonoBehaviour
             playerInputActions.Player.ActivateAbility.performed -= OnActivateAbilityPerformed;
             playerInputActions.Player.ResetToWhite.performed -= OnResetToWhitePerformed;
             playerInputActions.Player.ContinueDialogue.performed -= OnContinueDialoguePerformed;
+            playerInputActions.Player.Confirm.performed -= OnConfirmPerformed;
             playerInputActions.Dispose();
         }
     }
@@ -175,5 +178,10 @@ public class GameInputManager : MonoBehaviour
     private void OnContinueDialoguePerformed(InputAction.CallbackContext context)
     {
         OnContinueDialogueInput?.Invoke();
+    }
+
+    private void OnConfirmPerformed(InputAction.CallbackContext context)
+    {
+        OnConfirmInput?.Invoke();
     }
 }

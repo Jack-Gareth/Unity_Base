@@ -289,6 +289,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Confirm"",
+                    ""type"": ""Button"",
+                    ""id"": ""3f566c27-3a23-4e68-b715-b0db3d08cbeb"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -817,6 +826,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
                     ""action"": ""ContinueDialogue"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""14c921fb-0ba8-44cf-ac06-951f56229ca0"",
+                    ""path"": ""<DualShockGamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Confirm"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1426,6 +1446,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_ActivateAbility = m_Player.FindAction("ActivateAbility", throwIfNotFound: true);
         m_Player_ResetToWhite = m_Player.FindAction("ResetToWhite", throwIfNotFound: true);
         m_Player_ContinueDialogue = m_Player.FindAction("ContinueDialogue", throwIfNotFound: true);
+        m_Player_Confirm = m_Player.FindAction("Confirm", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1541,6 +1562,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ActivateAbility;
     private readonly InputAction m_Player_ResetToWhite;
     private readonly InputAction m_Player_ContinueDialogue;
+    private readonly InputAction m_Player_Confirm;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1641,6 +1663,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @ContinueDialogue => m_Wrapper.m_Player_ContinueDialogue;
         /// <summary>
+        /// Provides access to the underlying input action "Player/Confirm".
+        /// </summary>
+        public InputAction @Confirm => m_Wrapper.m_Player_Confirm;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -1732,6 +1758,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ContinueDialogue.started += instance.OnContinueDialogue;
             @ContinueDialogue.performed += instance.OnContinueDialogue;
             @ContinueDialogue.canceled += instance.OnContinueDialogue;
+            @Confirm.started += instance.OnConfirm;
+            @Confirm.performed += instance.OnConfirm;
+            @Confirm.canceled += instance.OnConfirm;
         }
 
         /// <summary>
@@ -1809,6 +1838,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @ContinueDialogue.started -= instance.OnContinueDialogue;
             @ContinueDialogue.performed -= instance.OnContinueDialogue;
             @ContinueDialogue.canceled -= instance.OnContinueDialogue;
+            @Confirm.started -= instance.OnConfirm;
+            @Confirm.performed -= instance.OnConfirm;
+            @Confirm.canceled -= instance.OnConfirm;
         }
 
         /// <summary>
@@ -2263,6 +2295,13 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnContinueDialogue(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Confirm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnConfirm(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.

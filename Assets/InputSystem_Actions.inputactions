@@ -203,6 +203,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Confirm",
+                    "type": "Button",
+                    "id": "3f566c27-3a23-4e68-b715-b0db3d08cbeb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -731,6 +740,17 @@
                     "processors": "",
                     "groups": ";Gamepad",
                     "action": "ContinueDialogue",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "14c921fb-0ba8-44cf-ac06-951f56229ca0",
+                    "path": "<DualShockGamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Gamepad",
+                    "action": "Confirm",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

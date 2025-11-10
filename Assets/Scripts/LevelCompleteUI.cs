@@ -19,6 +19,7 @@ public class LevelCompleteUI : MonoBehaviour
     [SerializeField] private float disablePlayerDelay = 0.5f;
 
     private bool isLevelComplete = false;
+    private bool isSubscribedToInput = false;
 
     private void Start()
     {
@@ -37,6 +38,37 @@ public class LevelCompleteUI : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        UnsubscribeFromInput();
+    }
+
+    private void SubscribeToInput()
+    {
+        if (!isSubscribedToInput && GameInputManager.Instance != null)
+        {
+            GameInputManager.Instance.OnConfirmInput += OnControllerConfirm;
+            isSubscribedToInput = true;
+        }
+    }
+
+    private void UnsubscribeFromInput()
+    {
+        if (isSubscribedToInput && GameInputManager.Instance != null)
+        {
+            GameInputManager.Instance.OnConfirmInput -= OnControllerConfirm;
+            isSubscribedToInput = false;
+        }
+    }
+
+    private void OnControllerConfirm()
+    {
+        if (isLevelComplete)
+        {
+            LoadNextLevel();
+        }
+    }
+
     public void ShowLevelComplete()
     {
         Debug.Log("ShowLevelComplete called!");
@@ -44,6 +76,8 @@ public class LevelCompleteUI : MonoBehaviour
         if (isLevelComplete) return;
 
         isLevelComplete = true;
+
+        SubscribeToInput();
 
         if (completePanel != null)
         {
