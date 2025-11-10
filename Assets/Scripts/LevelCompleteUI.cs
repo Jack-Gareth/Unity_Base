@@ -98,7 +98,15 @@ public class LevelCompleteUI : MonoBehaviour
 
     public void LoadNextLevel()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(currentScene.name);
+        if (SwipeTransition.Instance != null)
+        {
+            SwipeTransition.Instance.RestartCurrentScene();
+        }
+        else
+        {
+            Debug.LogWarning("SwipeTransition not found! Loading without transition...");
+            Scene currentScene = SceneManager.GetActiveScene();
+            SceneManager.LoadScene(currentScene.name);
+        }
     }
 }
