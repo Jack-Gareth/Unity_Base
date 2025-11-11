@@ -56,7 +56,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnJumpInput()
     {
-        jump.TryJump();
-        wallClimb?.TryWallJump();
+        bool didWallJump = wallClimb != null && wallClimb.TryWallJump();
+        
+        if (!didWallJump)
+        {
+            jump.TryJump();
+        }
     }
 }

@@ -4,16 +4,41 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundCheckRadius = 0.2f;
+    [SerializeField] private LayerMask groundMask;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
+    private PlayerWallClimb wallClimb;
+    private bool isGrounded;
 
-    private void Awake() => rb = GetComponent<Rigidbody2D>();
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        wallClimb = GetComponent<PlayerWallClimb>();
+    }
 
     public void SetMoveInput(Vector2 input) => moveInput = input;
 
+    private void Update()
+    {
+        if (groundCheck != null)
+        {
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundMask);
+        }
+    }
+
     private void FixedUpdate()
     {
-        rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+        if (wallClimb != null && wallClimb.JustWallJumped)
+            return;
+
+        bool hasHorizontalInput = Mathf.Abs(moveInput.x) > 0.01f;
+
+        if (hasHorizontalInput || isGrounded)
+        {
+            rb.linearVelocity = new Vector2(moveInput.x * moveSpeed, rb.linearVelocity.y);
+        }
     }
 }

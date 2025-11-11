@@ -299,7 +299,7 @@ MonoBehaviour:
   groundCheckRadius: 0.2
   groundMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 576
   coyoteTime: 0.05
   jumpBufferTime: 0.02
   jumpCooldown: 0.5
@@ -316,6 +316,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  groundCheck: {fileID: 4407057339918942768}
+  groundCheckRadius: 0.01
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 576
 --- !u!114 &1973204801748602447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -330,13 +335,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallCheckLeft: {fileID: 4366833596524178852}
   wallCheckRight: {fileID: 6395335867325097767}
-  wallCheckDistance: 0.3
+  wallCheckDistance: 0.09
   wallMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 1152
   climbSpeed: 6
-  wallJumpForce: 8
-  wallJumpDirection: {x: 1, y: 1}
+  wallJumpForce: 9
+  wallJumpDirection: {x: 2, y: 1}
 --- !u!114 &7804789684518472943
 MonoBehaviour:
   m_ObjectHideFlags: 0
