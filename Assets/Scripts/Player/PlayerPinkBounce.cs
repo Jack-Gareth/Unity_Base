@@ -8,135 +8,93 @@ public class PlayerPinkBounce : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private LayerMask nonMechanicLayer;
     [SerializeField] private float minVerticalDotProduct = 0.7f;
-    
+
     private Rigidbody2D rb;
-    private bool hasBouncedThisCollision = false;
-    private bool hasJumpedInPinkMode = false;
-    
+    private bool hasBouncedThisCollision;
+    private bool hasJumpedInPinkMode;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
     }
-    
+
     private void OnEnable()
     {
-        if (GameInputManager.Instance != null)
-        {
-            GameInputManager.Instance.OnRedColorInput += OnColorChanged;
-            GameInputManager.Instance.OnBlueColorInput += OnColorChanged;
-            GameInputManager.Instance.OnGreenColorInput += OnColorChanged;
-            GameInputManager.Instance.OnYellowColorInput += OnColorChanged;
-            GameInputManager.Instance.OnPinkColorInput += OnColorChanged;
-            GameInputManager.Instance.OnBrownColorInput += OnColorChanged;
-        }
+        PlayerEvents.OnColorChanged += HandleColorChanged;
     }
-    
+
     private void OnDisable()
     {
-        if (GameInputManager.Instance != null)
-        {
-            GameInputManager.Instance.OnRedColorInput -= OnColorChanged;
-            GameInputManager.Instance.OnBlueColorInput -= OnColorChanged;
-            GameInputManager.Instance.OnGreenColorInput -= OnColorChanged;
-            GameInputManager.Instance.OnYellowColorInput -= OnColorChanged;
-            GameInputManager.Instance.OnPinkColorInput -= OnColorChanged;
-            GameInputManager.Instance.OnBrownColorInput -= OnColorChanged;
-        }
+        PlayerEvents.OnColorChanged -= HandleColorChanged;
     }
-    
-    private void OnColorChanged()
+
+    private void HandleColorChanged(LevelColor newColor)
     {
-        if (LevelColorManager.Instance != null && LevelColorManager.Instance.CurrentColor != LevelColor.Pink)
-        {
+        if (newColor != LevelColor.Pink)
             hasJumpedInPinkMode = false;
-            Debug.Log("PlayerPinkBounce: Reset jump state (switched away from pink)");
-        }
     }
-    
+
     public void NotifyJumpPerformed()
     {
         if (LevelColorManager.Instance != null && LevelColorManager.Instance.CurrentColor == LevelColor.Pink)
-        {
             hasJumpedInPinkMode = true;
-            Debug.Log("PlayerPinkBounce: First jump in pink mode performed, bouncing will now activate");
-        }
     }
-    
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log($"PlayerPinkBounce: Collision detected with {collision.gameObject.name} on layer {collision.gameObject.layer}");
-        
-        if (((1 << collision.gameObject.layer) & nonMechanicLayer) != 0)
+        int layer = collision.gameObject.layer;
+
+        // Ignore collisions with non-mechanic surfaces
+        if (((1 << layer) & nonMechanicLayer) != 0)
         {
-            Debug.Log("PlayerPinkBounce: Landed on non-mechanic platform, resetting auto jump state");
             hasJumpedInPinkMode = false;
             return;
         }
-        
+
+        // Only bounce if currently pink
         if (LevelColorManager.Instance == null || LevelColorManager.Instance.CurrentColor != LevelColor.Pink)
-        {
-            Debug.Log("PlayerPinkBounce: Not in pink mode, skipping bounce");
             return;
-        }
-        
+
+        // Require a jump before first bounce
         if (!hasJumpedInPinkMode)
-        {
-            Debug.Log("PlayerPinkBounce: Haven't jumped yet in pink mode, skipping bounce");
             return;
-        }
-        
-        if (((1 << collision.gameObject.layer) & groundLayer) == 0)
-        {
-            Debug.Log($"PlayerPinkBounce: Object layer {collision.gameObject.layer} doesn't match ground layer mask {groundLayer.value}");
+
+        // Check if this collision is with valid ground
+        if (((1 << layer) & groundLayer) == 0)
             return;
-        }
-        
+
+        // Bounce only if collision is vertical (not wall)
         if (!IsVerticalCollision(collision))
-        {
-            Debug.Log("PlayerPinkBounce: Not a vertical collision (wall detected), skipping bounce");
             return;
-        }
-        
+
+        // Apply bounce once per collision
         if (!hasBouncedThisCollision)
         {
-            Debug.Log("PlayerPinkBounce: All conditions met, applying bounce!");
             ApplyBounce();
             hasBouncedThisCollision = true;
         }
-        else
-        {
-            Debug.Log("PlayerPinkBounce: Already bounced this collision");
-        }
     }
-    
+
     private void OnCollisionExit2D(Collision2D collision)
     {
         if (((1 << collision.gameObject.layer) & groundLayer) != 0)
-        {
             hasBouncedThisCollision = false;
-        }
     }
-    
+
     private bool IsVerticalCollision(Collision2D collision)
     {
-        foreach (ContactPoint2D contact in collision.contacts)
+        foreach (var contact in collision.contacts)
         {
-            float dotProduct = Mathf.Abs(Vector2.Dot(contact.normal, Vector2.up));
-            if (dotProduct >= minVerticalDotProduct)
-            {
+            float dot = Mathf.Abs(Vector2.Dot(contact.normal, Vector2.up));
+            if (dot >= minVerticalDotProduct)
                 return true;
-            }
         }
         return false;
     }
-    
+
     private void ApplyBounce()
     {
-        float bounceDirection = rb.gravityScale < 0 ? -1f : 1f;
-        float adjustedBounceForce = bounceForce * bounceDirection;
-        
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, adjustedBounceForce);
-        
-        Debug.Log($"Pink Bounce Applied! Force: {adjustedBounceForce}");
+        float direction = rb.gravityScale < 0 ? -1f : 1f;
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, bounceForce * direction);
     }
 }
