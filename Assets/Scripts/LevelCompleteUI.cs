@@ -77,6 +77,8 @@ public class LevelCompleteUI : MonoBehaviour
 
         isLevelComplete = true;
 
+        DisablePlayerImmediately();
+        
         SubscribeToInput();
 
         if (completePanel != null)
@@ -85,7 +87,6 @@ public class LevelCompleteUI : MonoBehaviour
         }
 
         UpdateDiamondDisplay();
-        StartCoroutine(DisablePlayer());
     }
 
     private void UpdateDiamondDisplay()
@@ -116,6 +117,27 @@ public class LevelCompleteUI : MonoBehaviour
             {
                 Debug.LogWarning($"Diamond icon {i} is null!");
             }
+        }
+    }
+
+    private void DisablePlayerImmediately()
+    {
+        PlayerController player = FindObjectOfType<PlayerController>();
+        if (player != null)
+        {
+            player.enabled = false;
+        }
+
+        PlayerMovement movement = FindObjectOfType<PlayerMovement>();
+        if (movement != null)
+        {
+            movement.enabled = false;
+        }
+
+        Rigidbody2D playerRb = FindObjectOfType<PlayerController>()?.GetComponent<Rigidbody2D>();
+        if (playerRb != null)
+        {
+            playerRb.linearVelocity = Vector2.zero;
         }
     }
 

@@ -6,6 +6,8 @@ public class PlayerPinkBounce : MonoBehaviour
     [Header("Bounce Settings")]
     [SerializeField] private float bounceForce = 10f;
     [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask nonMechanicLayer;
+    [SerializeField] private float minVerticalDotProduct = 0.7f;
     
     private Rigidbody2D rb;
     private bool hasBouncedThisCollision = false;
@@ -64,6 +66,13 @@ public class PlayerPinkBounce : MonoBehaviour
     {
         Debug.Log($"PlayerPinkBounce: Collision detected with {collision.gameObject.name} on layer {collision.gameObject.layer}");
         
+        if (((1 << collision.gameObject.layer) & nonMechanicLayer) != 0)
+        {
+            Debug.Log("PlayerPinkBounce: Landed on non-mechanic platform, resetting auto jump state");
+            hasJumpedInPinkMode = false;
+            return;
+        }
+        
         if (LevelColorManager.Instance == null || LevelColorManager.Instance.CurrentColor != LevelColor.Pink)
         {
             Debug.Log("PlayerPinkBounce: Not in pink mode, skipping bounce");
@@ -79,6 +88,12 @@ public class PlayerPinkBounce : MonoBehaviour
         if (((1 << collision.gameObject.layer) & groundLayer) == 0)
         {
             Debug.Log($"PlayerPinkBounce: Object layer {collision.gameObject.layer} doesn't match ground layer mask {groundLayer.value}");
+            return;
+        }
+        
+        if (!IsVerticalCollision(collision))
+        {
+            Debug.Log("PlayerPinkBounce: Not a vertical collision (wall detected), skipping bounce");
             return;
         }
         
@@ -100,6 +115,19 @@ public class PlayerPinkBounce : MonoBehaviour
         {
             hasBouncedThisCollision = false;
         }
+    }
+    
+    private bool IsVerticalCollision(Collision2D collision)
+    {
+        foreach (ContactPoint2D contact in collision.contacts)
+        {
+            float dotProduct = Mathf.Abs(Vector2.Dot(contact.normal, Vector2.up));
+            if (dotProduct >= minVerticalDotProduct)
+            {
+                return true;
+            }
+        }
+        return false;
     }
     
     private void ApplyBounce()

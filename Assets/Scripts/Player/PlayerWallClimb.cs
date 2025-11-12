@@ -14,6 +14,12 @@ public class PlayerWallClimb : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private bool isTouchingLeft, isTouchingRight, isClimbing;
+    private bool justWallJumped;
+    private float wallJumpTime;
+    private const float WALL_JUMP_LOCK_TIME = 0.2f;
+
+    public bool IsOnWall => (isTouchingLeft || isTouchingRight) && CanWallClimb();
+    public bool JustWallJumped => justWallJumped && (Time.time - wallJumpTime < WALL_JUMP_LOCK_TIME);
 
     private void Awake() => rb = GetComponent<Rigidbody2D>();
 
@@ -21,6 +27,11 @@ public class PlayerWallClimb : MonoBehaviour
 
     private void Update()
     {
+        if (Time.time - wallJumpTime >= WALL_JUMP_LOCK_TIME)
+        {
+            justWallJumped = false;
+        }
+        
         if (!CanWallClimb()) return;
 
         CheckWalls();
@@ -38,6 +49,9 @@ public class PlayerWallClimb : MonoBehaviour
 
     private void HandleClimb()
     {
+        if (JustWallJumped)
+            return;
+            
         bool touching = isTouchingLeft || isTouchingRight;
         bool pressingUp = moveInput.y > 0;
 
@@ -52,17 +66,34 @@ public class PlayerWallClimb : MonoBehaviour
         }
     }
 
-    public void TryWallJump()
+    public bool TryWallJump()
     {
-        if (!isClimbing || !CanWallClimb()) return;
+        CheckWalls();
+        
+        if (!CanWallClimb()) return false;
+
+        bool touching = isTouchingLeft || isTouchingRight;
+        if (!touching) return false;
 
         Vector2 dir = wallJumpDirection.normalized;
+        Vector2 jumpVelocity = Vector2.zero;
+        
         if (isTouchingLeft)
-            rb.linearVelocity = new Vector2(dir.x * wallJumpForce, dir.y * wallJumpForce);
+        {
+            jumpVelocity = new Vector2(dir.x * wallJumpForce, dir.y * wallJumpForce);
+            Debug.Log($"Wall Jump LEFT: velocity={jumpVelocity}");
+        }
         else if (isTouchingRight)
-            rb.linearVelocity = new Vector2(-dir.x * wallJumpForce, dir.y * wallJumpForce);
-
+        {
+            jumpVelocity = new Vector2(-dir.x * wallJumpForce, dir.y * wallJumpForce);
+            Debug.Log($"Wall Jump RIGHT: velocity={jumpVelocity}");
+        }
+        
+        rb.linearVelocity = jumpVelocity;
         isClimbing = false;
+        justWallJumped = true;
+        wallJumpTime = Time.time;
+        return true;
     }
 
     private bool CanWallClimb()

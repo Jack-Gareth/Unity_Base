@@ -8,6 +8,9 @@ public class PlayerGravityFlip : MonoBehaviour
     [SerializeField] private Transform _groundCheck;
     [Tooltip("Speed at which the player travels when gravity flip is activated")]
     [SerializeField] private float _gravityFlipTravelSpeed = 10f;
+    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private float raycastDistance = 20f;
+    [SerializeField] private float lengthTolerance = 0.1f;
 
     private Rigidbody2D _rb;
     private bool _isFlipped;
@@ -16,6 +19,7 @@ public class PlayerGravityFlip : MonoBehaviour
     private Vector3 _invertedGroundCheckLocalPos;
     private float _originalGravityScale;
     private Coroutine _activeTransportCoroutine;
+    private bool _autoResetInProgress = false;
 
     private void Awake()
     {
@@ -38,11 +42,67 @@ public class PlayerGravityFlip : MonoBehaviour
         PlayerEvents.OnColorChanged -= HandleColorChange;
         PlayerEvents.OnPlayerRespawn -= ResetGravity;
     }
+    
+    private void FixedUpdate()
+    {
+        if (_isFlipped && !_isFlipping && !_autoResetInProgress)
+        {
+            CheckForAutoGravityReset();
+        }
+    }
+    
+    private void CheckForAutoGravityReset()
+    {
+        Vector2 playerPosition = transform.position;
+        RaycastHit2D hitAbove = Physics2D.Raycast(playerPosition, Vector2.up, raycastDistance, groundLayer);
+        
+        if (hitAbove.collider == null)
+        {
+            Debug.Log("PlayerGravityFlip: No ceiling detected while flipped - auto-resetting gravity");
+            StartCoroutine(AutoResetGravityRoutine());
+        }
+    }
+    
+    private IEnumerator AutoResetGravityRoutine()
+    {
+        _autoResetInProgress = true;
+        
+        if (_activeTransportCoroutine != null)
+        {
+            StopCoroutine(_activeTransportCoroutine);
+            _activeTransportCoroutine = null;
+        }
+        
+        _rb.gravityScale = _originalGravityScale;
+        _isFlipped = false;
+        _groundCheck.localPosition = _normalGroundCheckLocalPos;
+        
+        Debug.Log("PlayerGravityFlip: Auto-reset completed - player falling to ground");
+        
+        yield return new WaitForSeconds(0.1f);
+        
+        _autoResetInProgress = false;
+    }
 
     private void HandleGravityFlip()
     {
         if (LevelColorManager.Instance.CurrentColor != LevelColor.Yellow)
+        {
+            Debug.Log("PlayerGravityFlip: Not in yellow mode");
             return;
+        }
+        
+        if (_autoResetInProgress)
+        {
+            Debug.Log("PlayerGravityFlip: Auto-reset in progress, cannot flip");
+            return;
+        }
+
+        if (!CanFlipGravity())
+        {
+            Debug.Log("PlayerGravityFlip: Cannot flip gravity - requirements not met");
+            return;
+        }
 
         if (!_isFlipping)
         {
@@ -51,6 +111,47 @@ public class PlayerGravityFlip : MonoBehaviour
 
             _activeTransportCoroutine = StartCoroutine(TransportPlayerRoutine());
         }
+    }
+    
+    private bool CanFlipGravity()
+    {
+        Vector2 playerPosition = transform.position;
+        
+        RaycastHit2D hitBelow = Physics2D.Raycast(playerPosition, Vector2.down, raycastDistance, groundLayer);
+        RaycastHit2D hitAbove = Physics2D.Raycast(playerPosition, Vector2.up, raycastDistance, groundLayer);
+        
+        if (hitBelow.collider == null)
+        {
+            Debug.Log("PlayerGravityFlip: No ground detected below player");
+            return false;
+        }
+        
+        if (hitAbove.collider == null)
+        {
+            Debug.Log("PlayerGravityFlip: No ground detected above player");
+            return false;
+        }
+        
+        BoxCollider2D colliderBelow = hitBelow.collider.GetComponent<BoxCollider2D>();
+        BoxCollider2D colliderAbove = hitAbove.collider.GetComponent<BoxCollider2D>();
+        
+        if (colliderBelow == null || colliderAbove == null)
+        {
+            Debug.Log("PlayerGravityFlip: Ground objects missing BoxCollider2D");
+            return false;
+        }
+        
+        float lengthBelow = colliderBelow.size.x * hitBelow.transform.lossyScale.x;
+        float lengthAbove = colliderAbove.size.x * hitAbove.transform.lossyScale.x;
+        
+        if (Mathf.Abs(lengthBelow - lengthAbove) > lengthTolerance)
+        {
+            Debug.Log($"PlayerGravityFlip: Ground lengths don't match. Below: {lengthBelow}, Above: {lengthAbove}");
+            return false;
+        }
+        
+        Debug.Log($"PlayerGravityFlip: Can flip! Ground below: {hitBelow.collider.name}, Above: {hitAbove.collider.name}, Length: {lengthBelow}");
+        return true;
     }
 
     private IEnumerator TransportPlayerRoutine()
@@ -117,5 +218,22 @@ public class PlayerGravityFlip : MonoBehaviour
         _groundCheck.localPosition = _normalGroundCheckLocalPos;
 
         Debug.Log($"PlayerGravityFlip: Gravity reset. gravityScale: {_rb.gravityScale}");
+    }
+    
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying)
+            return;
+            
+        Vector2 playerPosition = transform.position;
+        
+        RaycastHit2D hitBelow = Physics2D.Raycast(playerPosition, Vector2.down, raycastDistance, groundLayer);
+        RaycastHit2D hitAbove = Physics2D.Raycast(playerPosition, Vector2.up, raycastDistance, groundLayer);
+        
+        Gizmos.color = hitBelow.collider != null ? Color.green : Color.red;
+        Gizmos.DrawLine(playerPosition, playerPosition + Vector2.down * raycastDistance);
+        
+        Gizmos.color = hitAbove.collider != null ? Color.green : Color.red;
+        Gizmos.DrawLine(playerPosition, playerPosition + Vector2.up * raycastDistance);
     }
 }
