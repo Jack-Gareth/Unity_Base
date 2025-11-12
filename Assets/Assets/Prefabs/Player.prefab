@@ -385,6 +385,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _groundCheck: {fileID: 4407057339918942768}
   _gravityFlipTravelSpeed: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  raycastDistance: 20
+  lengthTolerance: 0.1
 --- !u!114 &3781917191067680897
 MonoBehaviour:
   m_ObjectHideFlags: 0
