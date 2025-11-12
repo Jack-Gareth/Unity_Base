@@ -354,6 +354,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cce1a99e2fd902d4c8d363561c736dff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shrinkScaleFactor: 0.4
+  transitionDuration: 0.3
 --- !u!114 &6803062788073982075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,6 +401,10 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  nonMechanicLayer:
+    serializedVersion: 2
+    m_Bits: 1536
+  minVerticalDotProduct: 0.7
 --- !u!114 &488188979356421629
 MonoBehaviour:
   m_ObjectHideFlags: 0
