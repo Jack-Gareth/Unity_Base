@@ -3116,6 +3116,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3359667844197248274, guid: 86f46656274b8c54dbaea3b31bd9488c, type: 3}
+      propertyPath: flipPushSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3359667844197248274, guid: 86f46656274b8c54dbaea3b31bd9488c, type: 3}
+      propertyPath: cooldownDuration
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5938794294868341486, guid: 86f46656274b8c54dbaea3b31bd9488c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -36.78
