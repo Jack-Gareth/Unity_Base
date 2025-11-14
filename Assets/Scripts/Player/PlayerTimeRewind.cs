@@ -28,42 +28,15 @@ public class PlayerTimeRewind : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Start()
-    {
-        TrySubscribeToInputManager();
-    }
-
     private void OnEnable()
     {
-        Debug.Log("PlayerTimeRewind: OnEnable called");
-        TrySubscribeToInputManager();
+        PlayerEvents.OnColorAbility += HandleAbilityInput;
         PlayerEvents.OnColorChanged += HandleColorChange;
-    }
-
-    private void TrySubscribeToInputManager()
-    {
-        if (GameInputManager.Instance != null)
-        {
-            GameInputManager.Instance.OnRedPhaseAbilityInput -= OnAbilityPressed;
-            GameInputManager.Instance.OnRedPhaseAbilityReleased -= OnAbilityReleased;
-            
-            GameInputManager.Instance.OnRedPhaseAbilityInput += OnAbilityPressed;
-            GameInputManager.Instance.OnRedPhaseAbilityReleased += OnAbilityReleased;
-            Debug.Log("PlayerTimeRewind: Subscribed to input events");
-        }
-        else
-        {
-            Debug.LogWarning("PlayerTimeRewind: GameInputManager.Instance is null!");
-        }
     }
 
     private void OnDisable()
     {
-        if (GameInputManager.Instance != null)
-        {
-            GameInputManager.Instance.OnRedPhaseAbilityInput -= OnAbilityPressed;
-            GameInputManager.Instance.OnRedPhaseAbilityReleased -= OnAbilityReleased;
-        }
+        PlayerEvents.OnColorAbility -= HandleAbilityInput;
         PlayerEvents.OnColorChanged -= HandleColorChange;
     }
 
@@ -99,41 +72,24 @@ public class PlayerTimeRewind : MonoBehaviour
 
             positionHistory.Enqueue(record);
 
-            while (positionHistory.Count > 0 && 
+            while (positionHistory.Count > 0 &&
                    Time.time - positionHistory.Peek().timestamp > maxRewindDuration)
             {
                 positionHistory.Dequeue();
             }
-
-            if (positionHistory.Count % 50 == 0)
-            {
-                Debug.Log($"PlayerTimeRewind: Recording positions - count = {positionHistory.Count}");
-            }
         }
     }
 
-    private void OnAbilityPressed()
+    private void HandleAbilityInput()
     {
-        Debug.Log($"PlayerTimeRewind: OnAbilityPressed - CurrentColor = {LevelColorManager.Instance.CurrentColor}, isRewinding = {isRewinding}, historyCount = {positionHistory.Count}");
-        
         if (LevelColorManager.Instance.CurrentColor != LevelColor.Brown)
             return;
 
         if (!isRewinding && positionHistory.Count > 0)
         {
-            Debug.Log("PlayerTimeRewind: Starting rewind");
             StartRewind();
         }
-        else
-        {
-            Debug.Log($"PlayerTimeRewind: Cannot rewind - isRewinding={isRewinding}, historyCount={positionHistory.Count}");
-        }
-    }
-
-    private void OnAbilityReleased()
-    {
-        Debug.Log($"PlayerTimeRewind: OnAbilityReleased - isRewinding = {isRewinding}");
-        if (isRewinding)
+        else if (isRewinding)
         {
             StopRewind();
         }
@@ -184,9 +140,8 @@ public class PlayerTimeRewind : MonoBehaviour
         if (newColor != LevelColor.Brown)
         {
             if (isRewinding)
-            {
                 StopRewind();
-            }
+
             positionHistory.Clear();
         }
     }

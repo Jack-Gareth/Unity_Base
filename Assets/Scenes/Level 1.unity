@@ -211,6 +211,7 @@ GameObject:
   - component: {fileID: 63131411}
   - component: {fileID: 63131410}
   - component: {fileID: 63131413}
+  - component: {fileID: 63131414}
   m_Layer: 0
   m_Name: ColorManager
   m_TagString: Untagged
@@ -280,7 +281,21 @@ MonoBehaviour:
   pinkColor: {r: 0.8490566, g: 0.3244037, b: 0.62048566, a: 1}
   brownColor: {r: 0.5921569, g: 0.4392157, b: 0.28627452, a: 1}
   colorPropertyName: _Color
+--- !u!114 &63131414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 63131409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96fa912bac72994d8ea0474b4b0388c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerChangeColliders
   redPhaseDuration: 1
+  redColor: {r: 1, g: 0, b: 0, a: 1}
+  colorPropertyName: _Color
 --- !u!1 &71713738
 GameObject:
   m_ObjectHideFlags: 0

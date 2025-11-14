@@ -4,46 +4,41 @@ using System.Collections;
 public class PlayerScaler : MonoBehaviour
 {
     [Header("Scale Settings")]
-    [SerializeField] [Range(0.1f, 1f)] private float shrinkScaleFactor = 0.6f;
-    [SerializeField] [Range(0.01f, 2f)] private float transitionDuration = 0.3f;
-    
+    [SerializeField][Range(0.1f, 1f)] private float shrinkScaleFactor = 0.6f;
+    [SerializeField][Range(0.01f, 2f)] private float transitionDuration = 0.3f;
+
     private Vector3 defaultScale;
     private Vector3 shrunkScale;
-    private bool isShrunken = false;
+    private bool isShrunken;
     private Coroutine resizeCoroutine;
-    private bool isInResizeTrigger = false;
-    
+    private bool isInResizeTrigger;
+
     private void Awake()
     {
         defaultScale = transform.localScale;
         shrunkScale = defaultScale * shrinkScaleFactor;
     }
-    
+
     private void OnEnable()
     {
-        PlayerEvents.OnGravityFlip += HandleAbilityPressed;
+        PlayerEvents.OnColorAbility += HandleAbilityInput;
         PlayerEvents.OnColorChanged += HandleColorChange;
     }
-    
+
     private void OnDisable()
     {
-        PlayerEvents.OnGravityFlip -= HandleAbilityPressed;
+        PlayerEvents.OnColorAbility -= HandleAbilityInput;
         PlayerEvents.OnColorChanged -= HandleColorChange;
     }
 
-    private void HandleAbilityPressed()
+    private void HandleAbilityInput()
     {
+        // Only activate in Green color mode
         if (LevelColorManager.Instance == null || LevelColorManager.Instance.CurrentColor != LevelColor.Green)
-        {
-            Debug.Log("PlayerScaler: Not in green mode, cannot resize");
             return;
-        }
 
         if (!isInResizeTrigger)
-        {
-            Debug.Log("PlayerScaler: Not in a resize trigger zone, cannot resize");
             return;
-        }
 
         ToggleSize();
     }
@@ -51,69 +46,53 @@ public class PlayerScaler : MonoBehaviour
     private void HandleColorChange(LevelColor newColor)
     {
         if (newColor != LevelColor.Green && isShrunken)
-        {
             ResizeToDefault();
-        }
     }
-    
+
     public void SetInResizeTrigger(bool inTrigger)
     {
         isInResizeTrigger = inTrigger;
     }
-    
-    public bool IsShrunken
-    {
-        get { return isShrunken; }
-    }
-    
+
+    public bool IsShrunken => isShrunken;
+
     public void ForceResizeToDefault()
     {
         if (isShrunken)
-        {
             ResizeToDefault();
-            Debug.Log($"PlayerScaler: Force resizing to DEFAULT (100%) at time {Time.time}");
-        }
     }
-    
+
     public void ToggleSize()
     {
         if (isShrunken)
-        {
             ResizeToDefault();
-            Debug.Log($"PlayerScaler: Resizing to DEFAULT (100%) at time {Time.time}");
-        }
         else
-        {
             ShrinkPlayer();
-            Debug.Log($"PlayerScaler: Resizing to SMALL ({shrinkScaleFactor * 100}%) at time {Time.time}");
-        }
     }
-    
+
     private void ShrinkPlayer()
     {
         if (resizeCoroutine != null)
-        {
             StopCoroutine(resizeCoroutine);
-        }
+
         resizeCoroutine = StartCoroutine(ResizeCoroutine(shrunkScale));
         isShrunken = true;
     }
-    
+
     private void ResizeToDefault()
     {
         if (resizeCoroutine != null)
-        {
             StopCoroutine(resizeCoroutine);
-        }
+
         resizeCoroutine = StartCoroutine(ResizeCoroutine(defaultScale));
         isShrunken = false;
     }
-    
+
     private IEnumerator ResizeCoroutine(Vector3 targetScale)
     {
         Vector3 startScale = transform.localScale;
         float elapsedTime = 0f;
-        
+
         while (elapsedTime < transitionDuration)
         {
             elapsedTime += Time.deltaTime;
@@ -121,7 +100,7 @@ public class PlayerScaler : MonoBehaviour
             transform.localScale = Vector3.Lerp(startScale, targetScale, t);
             yield return null;
         }
-        
+
         transform.localScale = targetScale;
         resizeCoroutine = null;
     }
@@ -129,8 +108,6 @@ public class PlayerScaler : MonoBehaviour
     public void ResetSize()
     {
         if (isShrunken)
-        {
             ResizeToDefault();
-        }
     }
 }
