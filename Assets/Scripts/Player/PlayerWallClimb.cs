@@ -17,11 +17,30 @@ public class PlayerWallClimb : MonoBehaviour
     private bool justWallJumped;
     private float wallJumpTime;
     private const float WALL_JUMP_LOCK_TIME = 0.2f;
+    private LevelMechanicsManager currentZone;
 
     public bool IsOnWall => (isTouchingLeft || isTouchingRight) && CanWallClimb();
     public bool JustWallJumped => justWallJumped && (Time.time - wallJumpTime < WALL_JUMP_LOCK_TIME);
 
     private void Awake() => rb = GetComponent<Rigidbody2D>();
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        LevelMechanicsManager zone = other.GetComponent<LevelMechanicsManager>();
+        if (zone != null)
+        {
+            currentZone = zone;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        LevelMechanicsManager zone = other.GetComponent<LevelMechanicsManager>();
+        if (zone != null && zone == currentZone)
+        {
+            currentZone = null;
+        }
+    }
 
     public void SetMoveInput(Vector2 input) => moveInput = input;
 
@@ -70,10 +89,22 @@ public class PlayerWallClimb : MonoBehaviour
     {
         CheckWalls();
         
-        if (!CanWallClimb()) return false;
+        if (!CanWallJump())
+        {
+            Debug.Log($"[WallClimb] Cannot wall jump - CanWallJump={CanWallJump()}, currentZone={(currentZone != null ? "exists" : "null")}");
+            if (currentZone != null)
+            {
+                Debug.Log($"[WallClimb] Zone state: BlueMechanic={currentZone.IsBlueMechanicEnabled}, InZone={currentZone.IsPlayerInZone}, CanWallJump={currentZone.CanWallJump}");
+            }
+            return false;
+        }
 
         bool touching = isTouchingLeft || isTouchingRight;
-        if (!touching) return false;
+        if (!touching)
+        {
+            Debug.Log("[WallClimb] Not touching wall");
+            return false;
+        }
 
         Vector2 dir = wallJumpDirection.normalized;
         Vector2 jumpVelocity = Vector2.zero;
@@ -98,7 +129,24 @@ public class PlayerWallClimb : MonoBehaviour
 
     private bool CanWallClimb()
     {
-        return LevelColorManager.Instance != null &&
-               LevelColorManager.Instance.CurrentColor == LevelColor.Blue;
+        if (currentZone != null)
+        {
+            return currentZone.IsBlueMechanicEnabled && currentZone.IsPlayerInZone;
+        }
+        
+        return false;
+    }
+
+    private bool CanWallJump()
+    {
+        if (currentZone != null)
+        {
+            bool inZone = currentZone.IsPlayerInZone;
+            bool heightRequirementMet = currentZone.CanWallJump;
+            
+            return currentZone.IsBlueMechanicEnabled && inZone && heightRequirementMet;
+        }
+        
+        return false;
     }
 }
