@@ -54,7 +54,6 @@ public class LevelMechanicsManager : MonoBehaviour
             if (heightClimbed >= minimumClimbHeight)
             {
                 canWallJump = true;
-                Debug.Log($"[LevelMechanics] Wall jump enabled! Climbed {heightClimbed:F2} units (minimum: {minimumClimbHeight})");
             }
         }
     }
@@ -98,8 +97,6 @@ public class LevelMechanicsManager : MonoBehaviour
             
             bool isGrounded = CheckIfPlayerIsGrounded(other);
             canWallJump = !isGrounded;
-            
-            Debug.Log($"[LevelMechanics] Player entered zone at height {entryHeight:F2}, isGrounded={isGrounded}, canWallJump={canWallJump}");
         }
     }
 

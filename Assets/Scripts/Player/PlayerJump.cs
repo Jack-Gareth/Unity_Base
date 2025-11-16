@@ -7,7 +7,7 @@ public class PlayerJump : MonoBehaviour
 
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.2f;
-    [SerializeField] private LayerMask groundMask;
+    [SerializeField] private LayerMask surfacesMask;
 
     [SerializeField] private float coyoteTime = 0.05f;
 
@@ -38,7 +38,7 @@ public class PlayerJump : MonoBehaviour
 
     private void Update()
     {
-        bool groundedNow = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundMask);
+        bool groundedNow = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, surfacesMask);
 
         if (groundedNow)
         {

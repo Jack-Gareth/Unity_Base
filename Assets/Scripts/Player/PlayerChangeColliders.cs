@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class PlayerChangeColliders : MonoBehaviour
 {
-    [SerializeField] private float redPhaseDuration = 1f;
+    [SerializeField] private float redPhaseExitDelay = 0.5f;
     [SerializeField] private Shader worldClipShader;
     [SerializeField][Range(0f, 1f)] private float transparencyAlpha = 0.3f;
 
@@ -16,9 +16,12 @@ public class PlayerChangeColliders : MonoBehaviour
     private List<Collider2D> disabledColliders = new List<Collider2D>();
     private List<GameObject> temporarySplitColliders = new List<GameObject>();
     
-    private Coroutine redPhaseCoroutine;
+    private Coroutine redPhaseExitCoroutine;
     private bool isRedPhaseActive;
+    private bool isPlayerInZone;
     private LevelMechanicsManager currentZone;
+    
+    private PhysicsMaterial2D noFrictionMaterial;
 
     private static readonly string CLIP_MIN_Y = "_ClipMinY";
     private static readonly string CLIP_MAX_Y = "_ClipMaxY";
@@ -34,7 +37,9 @@ public class PlayerChangeColliders : MonoBehaviour
             worldClipShader = Shader.Find("Custom/SpriteWorldClip");
         }
         
-        FindLevelObjects();
+        noFrictionMaterial = new PhysicsMaterial2D("RedPhase_NoFriction");
+        noFrictionMaterial.friction = 0f;
+        noFrictionMaterial.bounciness = 0f;
     }
 
     private void OnEnable()
@@ -60,25 +65,43 @@ public class PlayerChangeColliders : MonoBehaviour
         LevelMechanicsManager zone = other.GetComponent<LevelMechanicsManager>();
         if (zone != null)
         {
-            currentZone = zone;
-            RefreshLevelObjects();
+            if (zone.IsRedMechanicEnabled)
+            {
+                currentZone = zone;
+                isPlayerInZone = true;
+                
+                if (redPhaseExitCoroutine != null)
+                {
+                    StopCoroutine(redPhaseExitCoroutine);
+                    redPhaseExitCoroutine = null;
+                }
+                
+                if (isRedPhaseActive)
+                {
+                    RefreshLevelObjects();
+                    Bounds zoneBounds = GetZoneBounds();
+                    ApplyZoneClipping(zoneBounds);
+                }
+            }
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
         LevelMechanicsManager zone = other.GetComponent<LevelMechanicsManager>();
-        if (zone != null && zone == currentZone)
+        if (zone != null && zone == currentZone && zone.IsRedMechanicEnabled)
         {
-            if (redPhaseCoroutine != null)
+            isPlayerInZone = false;
+            
+            if (isRedPhaseActive)
             {
-                StopCoroutine(redPhaseCoroutine);
-                redPhaseCoroutine = null;
-                EndRedPhase();
+                if (redPhaseExitCoroutine != null)
+                    StopCoroutine(redPhaseExitCoroutine);
+                    
+                redPhaseExitCoroutine = StartCoroutine(RedPhaseExitDelayRoutine());
             }
             
             currentZone = null;
-            RestoreOriginalMaterials();
         }
     }
 
@@ -88,10 +111,10 @@ public class PlayerChangeColliders : MonoBehaviour
 
         RefreshLevelObjects();
 
-        if (redPhaseCoroutine != null)
-            StopCoroutine(redPhaseCoroutine);
-
-        redPhaseCoroutine = StartCoroutine(RedPhaseRoutine());
+        if (!isRedPhaseActive)
+        {
+            StartRedPhase();
+        }
     }
 
     private bool CanUseRedMechanic()
@@ -105,28 +128,33 @@ public class PlayerChangeColliders : MonoBehaviour
             inZone = currentZone.IsPlayerInZone;
         }
         
-        return mechanicEnabled && inZone;
+        return mechanicEnabled && inZone && !isRedPhaseActive;
     }
 
-    private IEnumerator RedPhaseRoutine()
+    private void StartRedPhase()
     {
         isRedPhaseActive = true;
 
         Bounds zoneBounds = GetZoneBounds();
         ApplyZoneClipping(zoneBounds);
         SplitAndDisableColliders(zoneBounds);
+    }
 
-        yield return new WaitForSecondsRealtime(redPhaseDuration);
-
+    private IEnumerator RedPhaseExitDelayRoutine()
+    {
+        yield return new WaitForSeconds(redPhaseExitDelay);
+        
         EndRedPhase();
-        isRedPhaseActive = false;
-        redPhaseCoroutine = null;
+        currentZone = null;
+        RestoreOriginalMaterials();
+        redPhaseExitCoroutine = null;
     }
 
     private void EndRedPhase()
     {
         RemoveZoneClipping();
         CleanupSplitColliders();
+        isRedPhaseActive = false;
     }
 
     private void SplitAndDisableColliders(Bounds zoneBounds)
@@ -222,7 +250,7 @@ public class PlayerChangeColliders : MonoBehaviour
         BoxCollider2D tempCollider = tempObj.AddComponent<BoxCollider2D>();
         tempCollider.size = size;
         tempCollider.isTrigger = original.isTrigger;
-        tempCollider.sharedMaterial = original.sharedMaterial;
+        tempCollider.sharedMaterial = noFrictionMaterial;
         tempCollider.offset = Vector2.zero;
         tempCollider.usedByEffector = original.usedByEffector;
         
@@ -309,8 +337,7 @@ public class PlayerChangeColliders : MonoBehaviour
 
     private void FindLevelObjects()
     {
-        int ground = LayerMask.NameToLayer("Ground");
-        int wall = LayerMask.NameToLayer("Wall");
+        int surfaces = LayerMask.NameToLayer("Surfaces");
 
         var renderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
         var colliders = FindObjectsByType<Collider2D>(FindObjectsSortMode.None);
@@ -325,7 +352,7 @@ public class PlayerChangeColliders : MonoBehaviour
 
         foreach (var r in renderers)
         {
-            if (r.gameObject.layer == ground || r.gameObject.layer == wall)
+            if (r.gameObject.layer == surfaces)
             {
                 if (!hasZoneBounds || IsWithinZone(r.bounds, zoneBounds))
                 {
@@ -348,7 +375,7 @@ public class PlayerChangeColliders : MonoBehaviour
 
         foreach (var c in colliders)
         {
-            if (c.gameObject.layer == ground || c.gameObject.layer == wall)
+            if (c.gameObject.layer == surfaces)
             {
                 if (!hasZoneBounds || IsWithinZone(c.bounds, zoneBounds))
                 {

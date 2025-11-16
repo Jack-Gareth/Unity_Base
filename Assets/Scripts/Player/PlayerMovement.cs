@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.2f;
-    [SerializeField] private LayerMask groundMask;
+    [SerializeField] private LayerMask surfacesMask;
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
@@ -25,7 +25,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (groundCheck != null)
         {
-            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundMask);
+            isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, surfacesMask);
         }
     }
 
