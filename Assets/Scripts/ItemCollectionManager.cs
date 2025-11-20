@@ -1,12 +1,14 @@
 using UnityEngine;
+using System;
 
 public class ItemCollectionManager : MonoBehaviour
 {
     public static ItemCollectionManager Instance { get; private set; }
+    public static event Action<int, int> OnItemsUpdated;
 
     [Header("Collection Stats")]
     [SerializeField] private int totalItemsInLevel = 3;
-    
+
     private int itemsCollected = 0;
 
     public int TotalItems => totalItemsInLevel;
@@ -38,11 +40,13 @@ public class ItemCollectionManager : MonoBehaviour
     {
         itemsCollected++;
         itemsCollected = Mathf.Clamp(itemsCollected, 0, totalItemsInLevel);
-        Debug.Log($"Items Collected: {itemsCollected}/{totalItemsInLevel}");
+
+        OnItemsUpdated?.Invoke(itemsCollected, totalItemsInLevel);
     }
 
     private void ResetCollection()
     {
         itemsCollected = 0;
+        OnItemsUpdated?.Invoke(itemsCollected, totalItemsInLevel);
     }
 }

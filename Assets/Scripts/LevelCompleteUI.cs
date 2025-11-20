@@ -1,175 +1,95 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using TMPro;
-using System.Collections;
 
-public class LevelCompleteUI : MonoBehaviour
+public class LevelCompleteUI : Singleton<LevelCompleteUI>
 {
     [Header("UI References")]
     [SerializeField] private GameObject completePanel;
     [SerializeField] private TextMeshProUGUI completeText;
-    [SerializeField] private Image[] diamondIcons;
+    [SerializeField] private UnityEngine.UI.Image[] diamondIcons;
 
     [Header("Diamond Colors")]
     [SerializeField] private Color collectedColor = Color.yellow;
     [SerializeField] private Color uncollectedColor = Color.gray;
 
-    [Header("Settings")]
-    [SerializeField] private float disablePlayerDelay = 0.5f;
-
     private bool isLevelComplete = false;
-    private bool isSubscribedToInput = false;
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
 
     private void Start()
     {
+        TrySubscribeToInput();
+
         if (completePanel != null)
-        {
             completePanel.SetActive(false);
-        }
-        else
-        {
-            Debug.LogError("Complete Panel is not assigned in the inspector!");
-        }
 
         if (completeText != null)
-        {
             completeText.text = "Finished";
-        }
     }
 
     private void OnDisable()
     {
-        UnsubscribeFromInput();
+        TryUnsubscribeFromInput();
     }
 
-    private void SubscribeToInput()
+    private void TrySubscribeToInput()
     {
-        if (!isSubscribedToInput && GameInputManager.Instance != null)
-        {
-            GameInputManager.Instance.OnConfirmInput += OnControllerConfirm;
-            isSubscribedToInput = true;
-        }
+        if (GameInputManager.Instance != null)
+            GameInputManager.Instance.OnConfirmInput += HandleConfirm;
     }
 
-    private void UnsubscribeFromInput()
+    private void TryUnsubscribeFromInput()
     {
-        if (isSubscribedToInput && GameInputManager.Instance != null)
-        {
-            GameInputManager.Instance.OnConfirmInput -= OnControllerConfirm;
-            isSubscribedToInput = false;
-        }
-    }
-
-    private void OnControllerConfirm()
-    {
-        if (isLevelComplete)
-        {
-            LoadNextLevel();
-        }
+        if (GameInputManager.Instance != null)
+            GameInputManager.Instance.OnConfirmInput -= HandleConfirm;
     }
 
     public void ShowLevelComplete()
     {
-        Debug.Log("ShowLevelComplete called!");
-        
-        if (isLevelComplete) return;
+        if (isLevelComplete)
+            return;
 
         isLevelComplete = true;
 
-        DisablePlayerImmediately();
-        
-        SubscribeToInput();
+        GameManager.Instance?.DisablePlayerControl();
 
         if (completePanel != null)
-        {
             completePanel.SetActive(true);
-        }
 
         UpdateDiamondDisplay();
     }
 
+    private void HandleConfirm()
+    {
+        if (isLevelComplete)
+            LoadNextLevel();
+    }
+
     private void UpdateDiamondDisplay()
     {
-        if (ItemCollectionManager.Instance == null)
-        {
-            Debug.LogWarning("ItemCollectionManager.Instance is null!");
-            return;
-        }
-
         if (diamondIcons == null || diamondIcons.Length == 0)
-        {
-            Debug.LogWarning("Diamond icons array is null or empty!");
             return;
-        }
 
-        int collected = ItemCollectionManager.Instance.ItemsCollected;
-        Debug.Log($"Updating diamonds: {collected} collected out of {ItemCollectionManager.Instance.TotalItems}");
+        int collected = GameManager.Instance.ItemsCollected;
 
         for (int i = 0; i < diamondIcons.Length; i++)
-        {
-            if (diamondIcons[i] != null)
-            {
-                diamondIcons[i].color = (i < collected) ? collectedColor : uncollectedColor;
-                Debug.Log($"Diamond {i}: Color set to {((i < collected) ? "Collected" : "Uncollected")}");
-            }
-            else
-            {
-                Debug.LogWarning($"Diamond icon {i} is null!");
-            }
-        }
+            diamondIcons[i].color = (i < collected) ? collectedColor : uncollectedColor;
     }
 
-    private void DisablePlayerImmediately()
-    {
-        PlayerController player = FindObjectOfType<PlayerController>();
-        if (player != null)
-        {
-            player.enabled = false;
-        }
-
-        PlayerMovement movement = FindObjectOfType<PlayerMovement>();
-        if (movement != null)
-        {
-            movement.enabled = false;
-        }
-
-        Rigidbody2D playerRb = FindObjectOfType<PlayerController>()?.GetComponent<Rigidbody2D>();
-        if (playerRb != null)
-        {
-            playerRb.linearVelocity = Vector2.zero;
-        }
-    }
-
-    private IEnumerator DisablePlayer()
-    {
-        yield return new WaitForSeconds(disablePlayerDelay);
-
-        PlayerController player = FindObjectOfType<PlayerController>();
-        if (player != null)
-        {
-            player.enabled = false;
-        }
-    }
-
-    public void LoadNextLevel()
+    private void LoadNextLevel()
     {
         if (LevelProgressionManager.Instance != null)
         {
             LevelProgressionManager.Instance.LoadNextLevel();
+            return;
         }
-        else
-        {
-            Debug.LogWarning("LevelProgressionManager not found! Restarting current scene...");
-            if (SwipeTransition.Instance != null)
-            {
-                SwipeTransition.Instance.RestartCurrentScene();
-            }
-            else
-            {
-                Scene currentScene = SceneManager.GetActiveScene();
-                SceneManager.LoadScene(currentScene.name);
-            }
-        }
+
+        // Fallback reload
+        Scene scene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(scene.name);
     }
 }
