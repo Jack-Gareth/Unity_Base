@@ -3,111 +3,92 @@ using System.Collections;
 
 public class PlayerScaler : MonoBehaviour
 {
-    [Header("Scale Settings")]
+    [Header("Scaling")]
+    [SerializeField] private Transform visualModel;
     [SerializeField][Range(0.1f, 1f)] private float shrinkScaleFactor = 0.6f;
-    [SerializeField][Range(0.01f, 2f)] private float transitionDuration = 0.3f;
+    [SerializeField][Range(0.05f, 2f)] private float resizeDuration = 0.25f;
 
     private Vector3 defaultScale;
     private Vector3 shrunkScale;
-    private bool isShrunken;
-    private Coroutine resizeCoroutine;
-    private bool isInResizeTrigger;
+    private bool isShrunken = false;
+    private Coroutine scaleRoutine;
 
     private void Awake()
     {
-        defaultScale = transform.localScale;
+        if (visualModel == null)
+            visualModel = transform; // fallback
+
+        defaultScale = visualModel.localScale;
         shrunkScale = defaultScale * shrinkScaleFactor;
     }
 
     private void OnEnable()
     {
-        PlayerEvents.OnColorAbility += HandleAbilityInput;
-        PlayerEvents.OnColorChanged += HandleColorChange;
+        PlayerEvents.OnColorAbility += OnAbilityPressed;
+        PlayerEvents.OnColorChanged += OnColorChanged;
     }
 
     private void OnDisable()
     {
-        PlayerEvents.OnColorAbility -= HandleAbilityInput;
-        PlayerEvents.OnColorChanged -= HandleColorChange;
+        PlayerEvents.OnColorAbility -= OnAbilityPressed;
+        PlayerEvents.OnColorChanged -= OnColorChanged;
     }
 
-    private void HandleAbilityInput()
+    private void OnAbilityPressed()
     {
-        // Only activate in Green color mode
-        if (LevelColorManager.Instance == null || LevelColorManager.Instance.CurrentColor != LevelColor.Green)
-            return;
-
-        if (!isInResizeTrigger)
+        // Only works if Green
+        if (LevelColorManager.Instance.CurrentColor != LevelColor.Green)
             return;
 
         ToggleSize();
     }
 
-    private void HandleColorChange(LevelColor newColor)
+    private void OnColorChanged(LevelColor newColor)
     {
         if (newColor != LevelColor.Green && isShrunken)
-            ResizeToDefault();
+            Resize(defaultScale, false);
     }
 
-    public void SetInResizeTrigger(bool inTrigger)
-    {
-        isInResizeTrigger = inTrigger;
-    }
-
-    public bool IsShrunken => isShrunken;
-
-    public void ForceResizeToDefault()
+    private void ToggleSize()
     {
         if (isShrunken)
-            ResizeToDefault();
-    }
-
-    public void ToggleSize()
-    {
-        if (isShrunken)
-            ResizeToDefault();
+            Resize(defaultScale, false);
         else
-            ShrinkPlayer();
+            Resize(shrunkScale, true);
     }
 
-    private void ShrinkPlayer()
+    private void Resize(Vector3 target, bool toShrunken)
     {
-        if (resizeCoroutine != null)
-            StopCoroutine(resizeCoroutine);
+        if (scaleRoutine != null)
+            StopCoroutine(scaleRoutine);
 
-        resizeCoroutine = StartCoroutine(ResizeCoroutine(shrunkScale));
-        isShrunken = true;
+        isShrunken = toShrunken;
+        scaleRoutine = StartCoroutine(SmoothScale(target));
     }
 
-    private void ResizeToDefault()
+    private IEnumerator SmoothScale(Vector3 target)
     {
-        if (resizeCoroutine != null)
-            StopCoroutine(resizeCoroutine);
+        Vector3 start = visualModel.localScale;
+        float t = 0f;
 
-        resizeCoroutine = StartCoroutine(ResizeCoroutine(defaultScale));
-        isShrunken = false;
-    }
-
-    private IEnumerator ResizeCoroutine(Vector3 targetScale)
-    {
-        Vector3 startScale = transform.localScale;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < transitionDuration)
+        while (t < resizeDuration)
         {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / transitionDuration;
-            transform.localScale = Vector3.Lerp(startScale, targetScale, t);
+            t += Time.deltaTime;
+            visualModel.localScale = Vector3.Lerp(start, target, t / resizeDuration);
             yield return null;
         }
 
-        transform.localScale = targetScale;
-        resizeCoroutine = null;
+        visualModel.localScale = target;
+        scaleRoutine = null;
     }
 
     public void ResetSize()
     {
-        if (isShrunken)
-            ResizeToDefault();
+        if (scaleRoutine != null)
+            StopCoroutine(scaleRoutine);
+
+        isShrunken = false;
+        visualModel.localScale = defaultScale;
     }
+
 }

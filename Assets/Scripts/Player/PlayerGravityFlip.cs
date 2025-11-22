@@ -6,162 +6,94 @@ public class PlayerGravityFlip : MonoBehaviour
 {
     [Header("Gravity Flip Settings")]
     [SerializeField] private Transform _groundCheck;
-    [Tooltip("Speed at which the player travels when gravity flip is activated")]
-    [SerializeField] private float _gravityFlipTravelSpeed = 10f;
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float raycastDistance = 20f;
-    [SerializeField] private float lengthTolerance = 0.1f;
+    [SerializeField] private float flipPushSpeed = 10f;
+    [SerializeField] private float cooldownDuration = 1f;
 
     private Rigidbody2D _rb;
     private bool _isFlipped;
-    private bool _isFlipping;
-    private Vector3 _normalGroundCheckLocalPos;
-    private Vector3 _invertedGroundCheckLocalPos;
+    private bool _isOnCooldown;
+
+    private Vector3 _normalGroundPos;
+    private Vector3 _invertedGroundPos;
     private float _originalGravityScale;
-    private Coroutine _activeTransportCoroutine;
-    private bool _autoResetInProgress = false;
 
     private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
         _originalGravityScale = Mathf.Abs(_rb.gravityScale);
-        _normalGroundCheckLocalPos = _groundCheck.localPosition;
-        _invertedGroundCheckLocalPos = new Vector3(_normalGroundCheckLocalPos.x, -_normalGroundCheckLocalPos.y, _normalGroundCheckLocalPos.z);
+
+        _normalGroundPos = _groundCheck.localPosition;
+        _invertedGroundPos = new Vector3(
+            _normalGroundPos.x,
+            -_normalGroundPos.y,
+            _normalGroundPos.z);
     }
 
     private void OnEnable()
     {
-        PlayerEvents.OnColorAbility += HandleColorAbility;
+        PlayerEvents.OnColorAbility += HandleFlip;
         PlayerEvents.OnColorChanged += HandleColorChange;
         PlayerEvents.OnPlayerRespawn += ResetGravity;
     }
 
     private void OnDisable()
     {
-        PlayerEvents.OnColorAbility -= HandleColorAbility;
+        PlayerEvents.OnColorAbility -= HandleFlip;
         PlayerEvents.OnColorChanged -= HandleColorChange;
         PlayerEvents.OnPlayerRespawn -= ResetGravity;
     }
 
-    private void FixedUpdate()
-    {
-        if (_isFlipped && !_isFlipping && !_autoResetInProgress)
-        {
-            CheckForAutoGravityReset();
-        }
-    }
-
-    private void HandleColorAbility()
+    private void HandleFlip()
     {
         if (LevelColorManager.Instance.CurrentColor != LevelColor.Yellow)
             return;
 
-        if (_autoResetInProgress || _isFlipping)
+        if (_isOnCooldown)
             return;
 
-        if (_activeTransportCoroutine != null)
-            StopCoroutine(_activeTransportCoroutine);
-
-        _activeTransportCoroutine = StartCoroutine(TransportPlayerRoutine());
-    }
-
-    private void CheckForAutoGravityReset()
-    {
-        Vector2 playerPosition = transform.position;
-        RaycastHit2D hitAbove = Physics2D.Raycast(playerPosition, Vector2.up, raycastDistance, groundLayer);
-
-        if (hitAbove.collider == null)
-        {
-            StartCoroutine(AutoResetGravityRoutine());
-        }
-    }
-
-    private IEnumerator AutoResetGravityRoutine()
-    {
-        _autoResetInProgress = true;
-
-        if (_activeTransportCoroutine != null)
-        {
-            StopCoroutine(_activeTransportCoroutine);
-            _activeTransportCoroutine = null;
-        }
-
-        _rb.gravityScale = _originalGravityScale;
-        _isFlipped = false;
-        _groundCheck.localPosition = _normalGroundCheckLocalPos;
-
-        yield return new WaitForSeconds(0.1f);
-        _autoResetInProgress = false;
-    }
-
-    private bool CanFlipGravity()
-    {
-        Vector2 playerPosition = transform.position;
-
-        RaycastHit2D hitBelow = Physics2D.Raycast(playerPosition, Vector2.down, raycastDistance, groundLayer);
-        RaycastHit2D hitAbove = Physics2D.Raycast(playerPosition, Vector2.up, raycastDistance, groundLayer);
-
-        return hitBelow.collider != null && hitAbove.collider != null;
-    }
-
-    private IEnumerator TransportPlayerRoutine()
-    {
-        _isFlipping = true;
-        _rb.gravityScale = 0f;
-
-        float travelDirection = _isFlipped ? -1f : 1f;
-        float targetSpeed = Mathf.Abs(_gravityFlipTravelSpeed) * travelDirection;
-
-        _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, targetSpeed);
-
-        yield return new WaitForSeconds(0.05f);
-        while (Mathf.Abs(_rb.linearVelocity.y) > 0.1f)
-            yield return null;
-
-        _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, 0f);
         FlipGravity();
-
-        _isFlipping = false;
-        _activeTransportCoroutine = null;
+        StartCoroutine(StartCooldown());
     }
 
-    private void HandleColorChange(LevelColor newColor)
+    private IEnumerator StartCooldown()
     {
-        if (newColor != LevelColor.Yellow)
-        {
-            if (_activeTransportCoroutine != null)
-            {
-                StopCoroutine(_activeTransportCoroutine);
-                _activeTransportCoroutine = null;
-            }
-
-            if (_isFlipped || _rb.gravityScale < 0)
-                ResetGravity();
-        }
+        _isOnCooldown = true;
+        yield return new WaitForSeconds(cooldownDuration);
+        _isOnCooldown = false;
     }
 
     private void FlipGravity()
     {
         _isFlipped = !_isFlipped;
+
         _rb.gravityScale = _isFlipped ? -_originalGravityScale : _originalGravityScale;
-        _groundCheck.localPosition = _isFlipped ? _invertedGroundCheckLocalPos : _normalGroundCheckLocalPos;
+
+        // Give a push so the player doesn't sit motionless mid-flip
+        float direction = _isFlipped ? 1f : -1f;
+        _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, flipPushSpeed * direction);
+
+        _groundCheck.localPosition = _isFlipped ? _invertedGroundPos : _normalGroundPos;
+    }
+
+    private void HandleColorChange(LevelColor newColor)
+    {
+        if (newColor != LevelColor.Yellow)
+            ResetGravity();
     }
 
     private void ResetGravity()
     {
         _rb.gravityScale = _originalGravityScale;
         _isFlipped = false;
-        _groundCheck.localPosition = _normalGroundCheckLocalPos;
+        _isOnCooldown = false;
+        _groundCheck.localPosition = _normalGroundPos;
     }
 
     private void OnDrawGizmos()
     {
-        if (!Application.isPlaying)
-            return;
+        if (!Application.isPlaying) return;
 
-        Vector2 playerPosition = transform.position;
         Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(playerPosition, playerPosition + Vector2.down * raycastDistance);
-        Gizmos.DrawLine(playerPosition, playerPosition + Vector2.up * raycastDistance);
+        Gizmos.DrawWireSphere(transform.position, 0.3f);
     }
 }
