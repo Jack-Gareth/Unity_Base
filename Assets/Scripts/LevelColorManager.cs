@@ -16,17 +16,12 @@ public class LevelColorManager : Singleton<LevelColorManager>
     [Header("Shader Settings")]
     [SerializeField] private string colorPropertyName = "_Color";
 
-    [Header("Red Phase Ability Settings")]
-    [SerializeField] private float redPhaseDuration = 1f;
-
     private SpriteRenderer[] levelRenderers;
     private Material[] levelMaterials;
     private BoxCollider2D[] levelColliders;
 
     private LevelColor currentColor = LevelColor.White;
     private bool inputConnected;
-    private bool isRedPhaseActive;
-    private Coroutine redPhaseCoroutine;
 
     private readonly LevelColor[] cyclableColors =
     {
@@ -74,10 +69,8 @@ public class LevelColorManager : Singleton<LevelColorManager>
 
         var input = GameInputManager.Instance;
         input.OnColorChangeInput += HandleColorChange;
-        input.OnRedPhaseAbilityInput += HandleRedPhaseAbility;
         input.OnCycleColorLeftInput += () => CycleColor(-1);
         input.OnCycleColorRightInput += () => CycleColor(1);
-        input.OnActivateAbilityInput += HandleRedPhaseAbility;
         input.OnResetToWhiteInput += ResetToWhite;
 
         inputConnected = true;
@@ -90,10 +83,8 @@ public class LevelColorManager : Singleton<LevelColorManager>
 
         var input = GameInputManager.Instance;
         input.OnColorChangeInput -= HandleColorChange;
-        input.OnRedPhaseAbilityInput -= HandleRedPhaseAbility;
         input.OnCycleColorLeftInput -= () => CycleColor(-1);
         input.OnCycleColorRightInput -= () => CycleColor(1);
-        input.OnActivateAbilityInput -= HandleRedPhaseAbility;
         input.OnResetToWhiteInput -= ResetToWhite;
 
         inputConnected = false;
@@ -112,9 +103,7 @@ public class LevelColorManager : Singleton<LevelColorManager>
     private void ChangeToColor(LevelColor target)
     {
         currentColor = target;
-        Color c = GetColor(target);
-        ApplyColor(c);
-        SetCollidersEnabled(true);
+        ApplyColor(GetColor(target));
         PlayerEvents.TriggerColorChange(currentColor);
     }
 
@@ -135,54 +124,12 @@ public class LevelColorManager : Singleton<LevelColorManager>
         _ => whiteColor
     };
 
-    // --- Red Phase ---
-
-    private void HandleRedPhaseAbility()
-    {
-        if (currentColor != LevelColor.Red) return;
-
-        if (redPhaseCoroutine != null)
-            StopCoroutine(redPhaseCoroutine);
-
-        redPhaseCoroutine = StartCoroutine(RedPhaseRoutine());
-    }
-
-    private IEnumerator RedPhaseRoutine()
-    {
-        isRedPhaseActive = true;
-
-        var transparent = redColor;
-        transparent.a = 0.5f;
-        ApplyColor(transparent);
-        SetCollidersEnabled(false);
-
-        yield return new WaitForSecondsRealtime(redPhaseDuration);
-
-        isRedPhaseActive = false;
-
-        if (currentColor == LevelColor.Red)
-        {
-            var solid = redColor;
-            solid.a = 1f;
-            ApplyColor(solid);
-            SetCollidersEnabled(true);
-        }
-
-        redPhaseCoroutine = null;
-    }
-
     // --- Reset / Respawn ---
 
     public void ResetToWhite()
     {
-        if (redPhaseCoroutine != null)
-            StopCoroutine(redPhaseCoroutine);
-
-        isRedPhaseActive = false;
         currentColor = LevelColor.White;
-
         ApplyColor(whiteColor);
-        SetCollidersEnabled(true);
         PlayerEvents.TriggerColorChange(LevelColor.White);
     }
 
@@ -202,12 +149,6 @@ public class LevelColorManager : Singleton<LevelColorManager>
             .ToArray();
 
         levelMaterials = levelRenderers.Select(r => r.material).ToArray();
-    }
-
-    private void SetCollidersEnabled(bool enable)
-    {
-        foreach (var col in levelColliders)
-            if (col != null) col.enabled = enable;
     }
 
     private void CycleColor(int dir)

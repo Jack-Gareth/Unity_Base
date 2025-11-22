@@ -88,24 +88,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "GravityFlip",
-                    "type": "Button",
-                    "id": "c911e69a-8ce4-4e83-8f11-a4c0b226ea61",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "RedPhaseAbility",
-                    "type": "Button",
-                    "id": "eecf0277-60da-4b30-934f-265cc782b1e0",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "CycleColorLeft",
                     "type": "Button",
                     "id": "15a1e967-0102-4c7f-b79f-7022ecf4ea85",
@@ -124,18 +106,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ActivateAbility",
+                    "name": "ColorAbility",
                     "type": "Button",
                     "id": "953f05c4-92d0-4bdb-88a6-9ca93625cfec",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "ResetToWhite",
-                    "type": "Button",
-                    "id": "5f3b0e9c-cc38-4f3d-9901-c10de2b350a2",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -557,28 +530,6 @@
                 },
                 {
                     "name": "",
-                    "id": "8efe257d-88c2-4baa-953d-23e86e124c86",
-                    "path": "<Keyboard>/h",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "GravityFlip",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "00ce49fc-973f-42e0-b4f6-807145502b73",
-                    "path": "<Keyboard>/g",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "RedPhaseAbility",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "72427b48-c698-4ef0-833f-02f07240ea1e",
                     "path": "<DualShockGamepad>/leftShoulder",
                     "interactions": "",
@@ -602,29 +553,29 @@
                 {
                     "name": "",
                     "id": "96e1a7d7-c0c3-420f-820b-b91c5190e654",
-                    "path": "<DualShockGamepad>/buttonWest",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "ActivateAbility",
+                    "groups": ";Gamepad;Keyboard&Mouse",
+                    "action": "ColorAbility",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "0479c3da-777f-4dad-987d-a8fd02c0672c",
-                    "path": "<DualShockGamepad>/buttonNorth",
+                    "id": "2a117a04-372c-40fe-a58a-94246a7fb361",
+                    "path": "<Gamepad>/buttonWest",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "ResetToWhite",
+                    "groups": ";Gamepad;Keyboard&Mouse",
+                    "action": "ColorAbility",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "12bda512-9885-436d-b01c-f22ce2d4a62c",
-                    "path": "<DualShockGamepad>/buttonEast",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -635,7 +586,7 @@
                 {
                     "name": "",
                     "id": "14c921fb-0ba8-44cf-ac06-951f56229ca0",
-                    "path": "<DualShockGamepad>/buttonSouth",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
@@ -645,66 +596,11 @@
                 },
                 {
                     "name": "",
-                    "id": "da5645e1-0ad5-47aa-8efd-d78341817534",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ColorChange",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "c2b5f54f-edbe-4f5f-9a0d-9e663589db3e",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ColorChange",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "cf9ad838-a376-4bf1-8b35-96e33e2c6ddc",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ColorChange",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "cc05342b-34e2-494a-85a0-3117c78a6585",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ColorChange",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "463b9a3b-3dc8-4f86-aa9c-cf07b6f8f197",
-                    "path": "<Keyboard>/e",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "ColorChange",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "e28f6c9b-02d7-4a65-a167-2abe580d466a",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/#(E)",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse;Gamepad",
                     "action": "ColorChange",
                     "isComposite": false,
                     "isPartOfComposite": false

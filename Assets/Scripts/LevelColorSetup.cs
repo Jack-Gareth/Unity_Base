@@ -15,9 +15,6 @@ public class LevelColorSetup : MonoBehaviour
         }
     }
     
-    /// <summary>
-    /// Sets up all level objects with the sprite color shader
-    /// </summary>
     [ContextMenu("Setup Level Materials")]
     public void SetupLevelMaterials()
     {
@@ -44,12 +41,7 @@ public class LevelColorSetup : MonoBehaviour
         {
             levelParents.Add(levelWall);
         }
-        
-        if (levelParents.Count == 0)
-        {
-            Debug.LogError("No level parent objects found! Looking for 'Level (Ground)' or 'Level (Wall)'.");
-            return;
-        }
+       
         
         int setupCount = 0;
         

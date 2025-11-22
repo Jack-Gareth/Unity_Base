@@ -31,18 +31,18 @@ public class PlayerGravityFlip : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerEvents.OnGravityFlip += HandleGravityFlip;
+        PlayerEvents.OnColorAbility += HandleColorAbility;
         PlayerEvents.OnColorChanged += HandleColorChange;
         PlayerEvents.OnPlayerRespawn += ResetGravity;
     }
 
     private void OnDisable()
     {
-        PlayerEvents.OnGravityFlip -= HandleGravityFlip;
+        PlayerEvents.OnColorAbility -= HandleColorAbility;
         PlayerEvents.OnColorChanged -= HandleColorChange;
         PlayerEvents.OnPlayerRespawn -= ResetGravity;
     }
-    
+
     private void FixedUpdate()
     {
         if (_isFlipped && !_isFlipping && !_autoResetInProgress)
@@ -50,114 +50,63 @@ public class PlayerGravityFlip : MonoBehaviour
             CheckForAutoGravityReset();
         }
     }
-    
+
+    private void HandleColorAbility()
+    {
+        if (LevelColorManager.Instance.CurrentColor != LevelColor.Yellow)
+            return;
+
+        if (_autoResetInProgress || _isFlipping)
+            return;
+
+        if (_activeTransportCoroutine != null)
+            StopCoroutine(_activeTransportCoroutine);
+
+        _activeTransportCoroutine = StartCoroutine(TransportPlayerRoutine());
+    }
+
     private void CheckForAutoGravityReset()
     {
         Vector2 playerPosition = transform.position;
         RaycastHit2D hitAbove = Physics2D.Raycast(playerPosition, Vector2.up, raycastDistance, groundLayer);
-        
+
         if (hitAbove.collider == null)
         {
-            Debug.Log("PlayerGravityFlip: No ceiling detected while flipped - auto-resetting gravity");
             StartCoroutine(AutoResetGravityRoutine());
         }
     }
-    
+
     private IEnumerator AutoResetGravityRoutine()
     {
         _autoResetInProgress = true;
-        
+
         if (_activeTransportCoroutine != null)
         {
             StopCoroutine(_activeTransportCoroutine);
             _activeTransportCoroutine = null;
         }
-        
+
         _rb.gravityScale = _originalGravityScale;
         _isFlipped = false;
         _groundCheck.localPosition = _normalGroundCheckLocalPos;
-        
-        Debug.Log("PlayerGravityFlip: Auto-reset completed - player falling to ground");
-        
+
         yield return new WaitForSeconds(0.1f);
-        
         _autoResetInProgress = false;
     }
 
-    private void HandleGravityFlip()
-    {
-        if (LevelColorManager.Instance.CurrentColor != LevelColor.Yellow)
-        {
-            Debug.Log("PlayerGravityFlip: Not in yellow mode");
-            return;
-        }
-        
-        if (_autoResetInProgress)
-        {
-            Debug.Log("PlayerGravityFlip: Auto-reset in progress, cannot flip");
-            return;
-        }
-
-        if (!CanFlipGravity())
-        {
-            Debug.Log("PlayerGravityFlip: Cannot flip gravity - requirements not met");
-            return;
-        }
-
-        if (!_isFlipping)
-        {
-            if (_activeTransportCoroutine != null)
-                StopCoroutine(_activeTransportCoroutine);
-
-            _activeTransportCoroutine = StartCoroutine(TransportPlayerRoutine());
-        }
-    }
-    
     private bool CanFlipGravity()
     {
         Vector2 playerPosition = transform.position;
-        
+
         RaycastHit2D hitBelow = Physics2D.Raycast(playerPosition, Vector2.down, raycastDistance, groundLayer);
         RaycastHit2D hitAbove = Physics2D.Raycast(playerPosition, Vector2.up, raycastDistance, groundLayer);
-        
-        if (hitBelow.collider == null)
-        {
-            Debug.Log("PlayerGravityFlip: No ground detected below player");
-            return false;
-        }
-        
-        if (hitAbove.collider == null)
-        {
-            Debug.Log("PlayerGravityFlip: No ground detected above player");
-            return false;
-        }
-        
-        BoxCollider2D colliderBelow = hitBelow.collider.GetComponent<BoxCollider2D>();
-        BoxCollider2D colliderAbove = hitAbove.collider.GetComponent<BoxCollider2D>();
-        
-        if (colliderBelow == null || colliderAbove == null)
-        {
-            Debug.Log("PlayerGravityFlip: Ground objects missing BoxCollider2D");
-            return false;
-        }
-        
-        float lengthBelow = colliderBelow.size.x * hitBelow.transform.lossyScale.x;
-        float lengthAbove = colliderAbove.size.x * hitAbove.transform.lossyScale.x;
-        
-        if (Mathf.Abs(lengthBelow - lengthAbove) > lengthTolerance)
-        {
-            Debug.Log($"PlayerGravityFlip: Ground lengths don't match. Below: {lengthBelow}, Above: {lengthAbove}");
-            return false;
-        }
-        
-        Debug.Log($"PlayerGravityFlip: Can flip! Ground below: {hitBelow.collider.name}, Above: {hitAbove.collider.name}, Length: {lengthBelow}");
-        return true;
+
+        return hitBelow.collider != null && hitAbove.collider != null;
     }
 
     private IEnumerator TransportPlayerRoutine()
     {
         _isFlipping = true;
-
         _rb.gravityScale = 0f;
 
         float travelDirection = _isFlipped ? -1f : 1f;
@@ -166,14 +115,10 @@ public class PlayerGravityFlip : MonoBehaviour
         _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, targetSpeed);
 
         yield return new WaitForSeconds(0.05f);
-
         while (Mathf.Abs(_rb.linearVelocity.y) > 0.1f)
-        {
             yield return null;
-        }
 
         _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, 0f);
-
         FlipGravity();
 
         _isFlipping = false;
@@ -182,8 +127,6 @@ public class PlayerGravityFlip : MonoBehaviour
 
     private void HandleColorChange(LevelColor newColor)
     {
-        Debug.Log($"PlayerGravityFlip: Color changed to {newColor}, isFlipped: {_isFlipped}, gravityScale: {_rb.gravityScale}");
-
         if (newColor != LevelColor.Yellow)
         {
             if (_activeTransportCoroutine != null)
@@ -192,13 +135,8 @@ public class PlayerGravityFlip : MonoBehaviour
                 _activeTransportCoroutine = null;
             }
 
-            _isFlipping = false;
-
             if (_isFlipped || _rb.gravityScale < 0)
-            {
-                Debug.Log("PlayerGravityFlip: Resetting gravity to normal");
                 ResetGravity();
-            }
         }
     }
 
@@ -207,8 +145,6 @@ public class PlayerGravityFlip : MonoBehaviour
         _isFlipped = !_isFlipped;
         _rb.gravityScale = _isFlipped ? -_originalGravityScale : _originalGravityScale;
         _groundCheck.localPosition = _isFlipped ? _invertedGroundCheckLocalPos : _normalGroundCheckLocalPos;
-
-        Debug.Log($"PlayerGravityFlip: Gravity flipped. isFlipped: {_isFlipped}, gravityScale: {_rb.gravityScale}");
     }
 
     private void ResetGravity()
@@ -216,24 +152,16 @@ public class PlayerGravityFlip : MonoBehaviour
         _rb.gravityScale = _originalGravityScale;
         _isFlipped = false;
         _groundCheck.localPosition = _normalGroundCheckLocalPos;
-
-        Debug.Log($"PlayerGravityFlip: Gravity reset. gravityScale: {_rb.gravityScale}");
     }
-    
+
     private void OnDrawGizmos()
     {
         if (!Application.isPlaying)
             return;
-            
+
         Vector2 playerPosition = transform.position;
-        
-        RaycastHit2D hitBelow = Physics2D.Raycast(playerPosition, Vector2.down, raycastDistance, groundLayer);
-        RaycastHit2D hitAbove = Physics2D.Raycast(playerPosition, Vector2.up, raycastDistance, groundLayer);
-        
-        Gizmos.color = hitBelow.collider != null ? Color.green : Color.red;
+        Gizmos.color = Color.yellow;
         Gizmos.DrawLine(playerPosition, playerPosition + Vector2.down * raycastDistance);
-        
-        Gizmos.color = hitAbove.collider != null ? Color.green : Color.red;
         Gizmos.DrawLine(playerPosition, playerPosition + Vector2.up * raycastDistance);
     }
 }

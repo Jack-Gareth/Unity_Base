@@ -11,13 +11,11 @@ public class GameInputManager : MonoBehaviour
     public Action<Vector2> OnMoveInput;
     public Action OnJumpInput;
 
-    // --- Unified Color Change ---
+    // --- Color System ---
     public Action<LevelColor> OnColorChangeInput;
 
-    // --- Abilities ---
-    public Action OnRedPhaseAbilityInput;
-    public Action OnRedPhaseAbilityReleased;
-    public Action OnActivateAbilityInput;
+    // --- Color Ability ---
+    public Action OnColorAbilityInput;
 
     // --- Color Cycling ---
     public Action OnCycleColorLeftInput;
@@ -53,20 +51,17 @@ public class GameInputManager : MonoBehaviour
         playerInputActions.Player.Move.canceled += OnMoveCanceled;
         playerInputActions.Player.Jump.performed += OnJumpPerformed;
 
-        // --- Unified Color Change ---
+        // --- Color Change ---
         playerInputActions.Player.ColorChange.performed += OnColorChangePerformed;
 
-        // --- Abilities ---
-        playerInputActions.Player.RedPhaseAbility.performed += OnRedPhaseAbilityPerformed;
-        playerInputActions.Player.RedPhaseAbility.canceled += OnRedPhaseAbilityCanceled;
-        playerInputActions.Player.ActivateAbility.performed += OnActivateAbilityPerformed;
+        // --- Unified Color Ability ---
+        playerInputActions.Player.ColorAbility.performed += OnColorAbilityPerformed;
 
         // --- Color Cycling ---
         playerInputActions.Player.CycleColorLeft.performed += OnCycleColorLeftPerformed;
         playerInputActions.Player.CycleColorRight.performed += OnCycleColorRightPerformed;
 
         // --- Utility ---
-        playerInputActions.Player.ResetToWhite.performed += OnResetToWhitePerformed;
         playerInputActions.Player.ContinueDialogue.performed += OnContinueDialoguePerformed;
         playerInputActions.Player.Confirm.performed += OnConfirmPerformed;
     }
@@ -83,20 +78,17 @@ public class GameInputManager : MonoBehaviour
         playerInputActions.Player.Move.canceled -= OnMoveCanceled;
         playerInputActions.Player.Jump.performed -= OnJumpPerformed;
 
-        // --- Unified Color Change ---
+        // --- Color Change ---
         playerInputActions.Player.ColorChange.performed -= OnColorChangePerformed;
 
-        // --- Abilities ---
-        playerInputActions.Player.RedPhaseAbility.performed -= OnRedPhaseAbilityPerformed;
-        playerInputActions.Player.RedPhaseAbility.canceled -= OnRedPhaseAbilityCanceled;
-        playerInputActions.Player.ActivateAbility.performed -= OnActivateAbilityPerformed;
+        // --- Unified Color Ability ---
+        playerInputActions.Player.ColorAbility.performed -= OnColorAbilityPerformed;
 
         // --- Color Cycling ---
         playerInputActions.Player.CycleColorLeft.performed -= OnCycleColorLeftPerformed;
         playerInputActions.Player.CycleColorRight.performed -= OnCycleColorRightPerformed;
 
         // --- Utility ---
-        playerInputActions.Player.ResetToWhite.performed -= OnResetToWhitePerformed;
         playerInputActions.Player.ContinueDialogue.performed -= OnContinueDialoguePerformed;
         playerInputActions.Player.Confirm.performed -= OnConfirmPerformed;
 
@@ -108,37 +100,25 @@ public class GameInputManager : MonoBehaviour
     private void OnMoveCanceled(InputAction.CallbackContext ctx) => OnMoveInput?.Invoke(Vector2.zero);
     private void OnJumpPerformed(InputAction.CallbackContext ctx) => OnJumpInput?.Invoke();
 
-    // --- Unified Color Change ---
+    // --- Color Change ---
     private void OnColorChangePerformed(InputAction.CallbackContext ctx)
     {
-        // The binding name (as defined in Input Actions, e.g., "Red", "Blue", etc.)
-        string bindingName = ctx.action.activeControl?.name ?? string.Empty;
+        LevelColor current = LevelColorManager.Instance.CurrentColor;
 
-        if (Enum.TryParse(bindingName, true, out LevelColor color))
-        {
-            OnColorChangeInput?.Invoke(color);
-            PlayerEvents.TriggerColorChange(color);
-        }
-        else
-        {
-            Debug.LogWarning($"GameInputManager: Unknown color binding '{bindingName}'.");
-        }
+        int next = ((int)current + 1) % Enum.GetValues(typeof(LevelColor)).Length;
+        LevelColor nextColor = (LevelColor)next;
+
+        OnColorChangeInput?.Invoke(nextColor);
+        PlayerEvents.TriggerColorChange(nextColor);
     }
 
-    // --- Abilities ---
-    private void OnRedPhaseAbilityPerformed(InputAction.CallbackContext ctx)
-    {
-        OnRedPhaseAbilityInput?.Invoke();
-        PlayerEvents.TriggerGravityFlip();
-    }
 
-    private void OnRedPhaseAbilityCanceled(InputAction.CallbackContext ctx) => OnRedPhaseAbilityReleased?.Invoke();
 
-    private void OnActivateAbilityPerformed(InputAction.CallbackContext ctx)
+    // --- Unified Color Ability ---
+    private void OnColorAbilityPerformed(InputAction.CallbackContext ctx)
     {
-        OnActivateAbilityInput?.Invoke();
-        OnRedPhaseAbilityInput?.Invoke();
-        PlayerEvents.TriggerGravityFlip();
+        OnColorAbilityInput?.Invoke();
+        PlayerEvents.TriggerColorAbility();
     }
 
     // --- Color Cycling ---

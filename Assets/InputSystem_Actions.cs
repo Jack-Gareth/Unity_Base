@@ -174,24 +174,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""GravityFlip"",
-                    ""type"": ""Button"",
-                    ""id"": ""c911e69a-8ce4-4e83-8f11-a4c0b226ea61"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""RedPhaseAbility"",
-                    ""type"": ""Button"",
-                    ""id"": ""eecf0277-60da-4b30-934f-265cc782b1e0"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""CycleColorLeft"",
                     ""type"": ""Button"",
                     ""id"": ""15a1e967-0102-4c7f-b79f-7022ecf4ea85"",
@@ -210,18 +192,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ActivateAbility"",
+                    ""name"": ""ColorAbility"",
                     ""type"": ""Button"",
                     ""id"": ""953f05c4-92d0-4bdb-88a6-9ca93625cfec"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""ResetToWhite"",
-                    ""type"": ""Button"",
-                    ""id"": ""5f3b0e9c-cc38-4f3d-9901-c10de2b350a2"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -643,28 +616,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""8efe257d-88c2-4baa-953d-23e86e124c86"",
-                    ""path"": ""<Keyboard>/h"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""GravityFlip"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""00ce49fc-973f-42e0-b4f6-807145502b73"",
-                    ""path"": ""<Keyboard>/g"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""RedPhaseAbility"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""72427b48-c698-4ef0-833f-02f07240ea1e"",
                     ""path"": ""<DualShockGamepad>/leftShoulder"",
                     ""interactions"": """",
@@ -688,29 +639,29 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""96e1a7d7-c0c3-420f-820b-b91c5190e654"",
-                    ""path"": ""<DualShockGamepad>/buttonWest"",
+                    ""path"": ""<Keyboard>/r"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""ActivateAbility"",
+                    ""groups"": "";Gamepad;Keyboard&Mouse"",
+                    ""action"": ""ColorAbility"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""0479c3da-777f-4dad-987d-a8fd02c0672c"",
-                    ""path"": ""<DualShockGamepad>/buttonNorth"",
+                    ""id"": ""2a117a04-372c-40fe-a58a-94246a7fb361"",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": "";Gamepad"",
-                    ""action"": ""ResetToWhite"",
+                    ""groups"": "";Gamepad;Keyboard&Mouse"",
+                    ""action"": ""ColorAbility"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
                     ""id"": ""12bda512-9885-436d-b01c-f22ce2d4a62c"",
-                    ""path"": ""<DualShockGamepad>/buttonEast"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
@@ -721,7 +672,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""14c921fb-0ba8-44cf-ac06-951f56229ca0"",
-                    ""path"": ""<DualShockGamepad>/buttonSouth"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": "";Gamepad"",
@@ -731,66 +682,11 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""da5645e1-0ad5-47aa-8efd-d78341817534"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ColorChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""c2b5f54f-edbe-4f5f-9a0d-9e663589db3e"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ColorChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""cf9ad838-a376-4bf1-8b35-96e33e2c6ddc"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ColorChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""cc05342b-34e2-494a-85a0-3117c78a6585"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ColorChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""463b9a3b-3dc8-4f86-aa9c-cf07b6f8f197"",
-                    ""path"": ""<Keyboard>/e"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""ColorChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""e28f6c9b-02d7-4a65-a167-2abe580d466a"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/#(E)"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": "";Keyboard&Mouse;Gamepad"",
                     ""action"": ""ColorChange"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
@@ -1388,12 +1284,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_Player_Previous = m_Player.FindAction("Previous", throwIfNotFound: true);
         m_Player_Next = m_Player.FindAction("Next", throwIfNotFound: true);
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
-        m_Player_GravityFlip = m_Player.FindAction("GravityFlip", throwIfNotFound: true);
-        m_Player_RedPhaseAbility = m_Player.FindAction("RedPhaseAbility", throwIfNotFound: true);
         m_Player_CycleColorLeft = m_Player.FindAction("CycleColorLeft", throwIfNotFound: true);
         m_Player_CycleColorRight = m_Player.FindAction("CycleColorRight", throwIfNotFound: true);
-        m_Player_ActivateAbility = m_Player.FindAction("ActivateAbility", throwIfNotFound: true);
-        m_Player_ResetToWhite = m_Player.FindAction("ResetToWhite", throwIfNotFound: true);
+        m_Player_ColorAbility = m_Player.FindAction("ColorAbility", throwIfNotFound: true);
         m_Player_ContinueDialogue = m_Player.FindAction("ContinueDialogue", throwIfNotFound: true);
         m_Player_Confirm = m_Player.FindAction("Confirm", throwIfNotFound: true);
         m_Player_ColorChange = m_Player.FindAction("ColorChange", throwIfNotFound: true);
@@ -1499,12 +1392,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Previous;
     private readonly InputAction m_Player_Next;
     private readonly InputAction m_Player_Sprint;
-    private readonly InputAction m_Player_GravityFlip;
-    private readonly InputAction m_Player_RedPhaseAbility;
     private readonly InputAction m_Player_CycleColorLeft;
     private readonly InputAction m_Player_CycleColorRight;
-    private readonly InputAction m_Player_ActivateAbility;
-    private readonly InputAction m_Player_ResetToWhite;
+    private readonly InputAction m_Player_ColorAbility;
     private readonly InputAction m_Player_ContinueDialogue;
     private readonly InputAction m_Player_Confirm;
     private readonly InputAction m_Player_ColorChange;
@@ -1556,14 +1446,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         /// <summary>
-        /// Provides access to the underlying input action "Player/GravityFlip".
-        /// </summary>
-        public InputAction @GravityFlip => m_Wrapper.m_Player_GravityFlip;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/RedPhaseAbility".
-        /// </summary>
-        public InputAction @RedPhaseAbility => m_Wrapper.m_Player_RedPhaseAbility;
-        /// <summary>
         /// Provides access to the underlying input action "Player/CycleColorLeft".
         /// </summary>
         public InputAction @CycleColorLeft => m_Wrapper.m_Player_CycleColorLeft;
@@ -1572,13 +1454,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @CycleColorRight => m_Wrapper.m_Player_CycleColorRight;
         /// <summary>
-        /// Provides access to the underlying input action "Player/ActivateAbility".
+        /// Provides access to the underlying input action "Player/ColorAbility".
         /// </summary>
-        public InputAction @ActivateAbility => m_Wrapper.m_Player_ActivateAbility;
-        /// <summary>
-        /// Provides access to the underlying input action "Player/ResetToWhite".
-        /// </summary>
-        public InputAction @ResetToWhite => m_Wrapper.m_Player_ResetToWhite;
+        public InputAction @ColorAbility => m_Wrapper.m_Player_ColorAbility;
         /// <summary>
         /// Provides access to the underlying input action "Player/ContinueDialogue".
         /// </summary>
@@ -1644,24 +1522,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Sprint.started += instance.OnSprint;
             @Sprint.performed += instance.OnSprint;
             @Sprint.canceled += instance.OnSprint;
-            @GravityFlip.started += instance.OnGravityFlip;
-            @GravityFlip.performed += instance.OnGravityFlip;
-            @GravityFlip.canceled += instance.OnGravityFlip;
-            @RedPhaseAbility.started += instance.OnRedPhaseAbility;
-            @RedPhaseAbility.performed += instance.OnRedPhaseAbility;
-            @RedPhaseAbility.canceled += instance.OnRedPhaseAbility;
             @CycleColorLeft.started += instance.OnCycleColorLeft;
             @CycleColorLeft.performed += instance.OnCycleColorLeft;
             @CycleColorLeft.canceled += instance.OnCycleColorLeft;
             @CycleColorRight.started += instance.OnCycleColorRight;
             @CycleColorRight.performed += instance.OnCycleColorRight;
             @CycleColorRight.canceled += instance.OnCycleColorRight;
-            @ActivateAbility.started += instance.OnActivateAbility;
-            @ActivateAbility.performed += instance.OnActivateAbility;
-            @ActivateAbility.canceled += instance.OnActivateAbility;
-            @ResetToWhite.started += instance.OnResetToWhite;
-            @ResetToWhite.performed += instance.OnResetToWhite;
-            @ResetToWhite.canceled += instance.OnResetToWhite;
+            @ColorAbility.started += instance.OnColorAbility;
+            @ColorAbility.performed += instance.OnColorAbility;
+            @ColorAbility.canceled += instance.OnColorAbility;
             @ContinueDialogue.started += instance.OnContinueDialogue;
             @ContinueDialogue.performed += instance.OnContinueDialogue;
             @ContinueDialogue.canceled += instance.OnContinueDialogue;
@@ -1709,24 +1578,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Sprint.started -= instance.OnSprint;
             @Sprint.performed -= instance.OnSprint;
             @Sprint.canceled -= instance.OnSprint;
-            @GravityFlip.started -= instance.OnGravityFlip;
-            @GravityFlip.performed -= instance.OnGravityFlip;
-            @GravityFlip.canceled -= instance.OnGravityFlip;
-            @RedPhaseAbility.started -= instance.OnRedPhaseAbility;
-            @RedPhaseAbility.performed -= instance.OnRedPhaseAbility;
-            @RedPhaseAbility.canceled -= instance.OnRedPhaseAbility;
             @CycleColorLeft.started -= instance.OnCycleColorLeft;
             @CycleColorLeft.performed -= instance.OnCycleColorLeft;
             @CycleColorLeft.canceled -= instance.OnCycleColorLeft;
             @CycleColorRight.started -= instance.OnCycleColorRight;
             @CycleColorRight.performed -= instance.OnCycleColorRight;
             @CycleColorRight.canceled -= instance.OnCycleColorRight;
-            @ActivateAbility.started -= instance.OnActivateAbility;
-            @ActivateAbility.performed -= instance.OnActivateAbility;
-            @ActivateAbility.canceled -= instance.OnActivateAbility;
-            @ResetToWhite.started -= instance.OnResetToWhite;
-            @ResetToWhite.performed -= instance.OnResetToWhite;
-            @ResetToWhite.canceled -= instance.OnResetToWhite;
+            @ColorAbility.started -= instance.OnColorAbility;
+            @ColorAbility.performed -= instance.OnColorAbility;
+            @ColorAbility.canceled -= instance.OnColorAbility;
             @ContinueDialogue.started -= instance.OnContinueDialogue;
             @ContinueDialogue.performed -= instance.OnContinueDialogue;
             @ContinueDialogue.canceled -= instance.OnContinueDialogue;
@@ -2100,20 +1960,6 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSprint(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "GravityFlip" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnGravityFlip(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "RedPhaseAbility" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnRedPhaseAbility(InputAction.CallbackContext context);
-        /// <summary>
         /// Method invoked when associated input action "CycleColorLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
@@ -2128,19 +1974,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCycleColorRight(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "ActivateAbility" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "ColorAbility" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnActivateAbility(InputAction.CallbackContext context);
-        /// <summary>
-        /// Method invoked when associated input action "ResetToWhite" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
-        /// </summary>
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
-        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnResetToWhite(InputAction.CallbackContext context);
+        void OnColorAbility(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "ContinueDialogue" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
