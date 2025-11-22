@@ -1,6 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using System.Collections;
+using System.Linq;
 
 public class LevelColorManager : Singleton<LevelColorManager>
 {
@@ -22,161 +22,139 @@ public class LevelColorManager : Singleton<LevelColorManager>
     private SpriteRenderer[] levelRenderers;
     private Material[] levelMaterials;
     private BoxCollider2D[] levelColliders;
+
     private LevelColor currentColor = LevelColor.White;
-    private bool inputManagerConnected = false;
-    private bool isRedPhaseActive = false;
+    private bool inputConnected;
+    private bool isRedPhaseActive;
     private Coroutine redPhaseCoroutine;
+
+    private readonly LevelColor[] cyclableColors =
+    {
+        LevelColor.Red, LevelColor.Blue, LevelColor.Green,
+        LevelColor.Yellow, LevelColor.Pink, LevelColor.Brown
+    };
 
     public LevelColor CurrentColor => currentColor;
 
     protected override void Awake()
     {
         base.Awake();
-
         StartCoroutine(DelayedSetup());
     }
 
-    private System.Collections.IEnumerator DelayedSetup()
+    private IEnumerator DelayedSetup()
     {
         yield return null;
         FindLevelObjects();
-    }
-
-    private void Start()
-    {
-        if (levelRenderers == null || levelRenderers.Length == 0)
-        {
-            FindLevelObjects();
-        }
-
-        if (GameInputManager.Instance == null)
-        {
-        }
-        TryConnectToInputManager();
+        TryConnectInput();
     }
 
     private void Update()
     {
-        if (!inputManagerConnected && GameInputManager.Instance != null)
-        {
-            TryConnectToInputManager();
-        }
+        if (!inputConnected && GameInputManager.Instance != null)
+            TryConnectInput();
     }
 
     private void OnEnable()
     {
-        TryConnectToInputManager();
-        PlayerEvents.OnPlayerRespawn += HandlePlayerRespawn;
-    }
-
-    private void TryConnectToInputManager()
-    {
-        if (GameInputManager.Instance != null && !inputManagerConnected)
-        {
-            DisconnectFromInputManager();
-
-            GameInputManager.Instance.OnRedColorInput += OnRedColorPressed;
-            GameInputManager.Instance.OnBlueColorInput += OnBlueColorPressed;
-            GameInputManager.Instance.OnGreenColorInput += OnGreenColorPressed;
-            GameInputManager.Instance.OnYellowColorInput += OnYellowColorPressed;
-            GameInputManager.Instance.OnPinkColorInput += OnPinkColorPressed;
-            GameInputManager.Instance.OnBrownColorInput += OnBrownColorPressed;
-            GameInputManager.Instance.OnRedPhaseAbilityInput += OnRedPhaseAbilityPressed;
-            inputManagerConnected = true;
-        }
-        else if (GameInputManager.Instance == null)
-        {
-            inputManagerConnected = false;
-        }
-    }
-
-    private void DisconnectFromInputManager()
-    {
-        if (GameInputManager.Instance != null && inputManagerConnected)
-        {
-            GameInputManager.Instance.OnRedColorInput -= OnRedColorPressed;
-            GameInputManager.Instance.OnBlueColorInput -= OnBlueColorPressed;
-            GameInputManager.Instance.OnGreenColorInput -= OnGreenColorPressed;
-            GameInputManager.Instance.OnYellowColorInput -= OnYellowColorPressed;
-            GameInputManager.Instance.OnPinkColorInput -= OnPinkColorPressed;
-            GameInputManager.Instance.OnBrownColorInput -= OnBrownColorPressed;
-            GameInputManager.Instance.OnRedPhaseAbilityInput -= OnRedPhaseAbilityPressed;
-            inputManagerConnected = false;
-        }
+        TryConnectInput();
+        PlayerEvents.OnPlayerRespawn += ResetToWhite;
     }
 
     private void OnDisable()
     {
-        DisconnectFromInputManager();
-        PlayerEvents.OnPlayerRespawn -= HandlePlayerRespawn;
+        DisconnectInput();
+        PlayerEvents.OnPlayerRespawn -= ResetToWhite;
     }
 
-    private void FindLevelObjects()
+    private void TryConnectInput()
     {
-        int groundLayer = LayerMask.NameToLayer("Ground");
-        int wallLayer = LayerMask.NameToLayer("Wall");
-
-        SpriteRenderer[] allRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None);
-        BoxCollider2D[] allColliders = FindObjectsByType<BoxCollider2D>(FindObjectsSortMode.None);
-
-        System.Collections.Generic.List<SpriteRenderer> levelRenderersList = new System.Collections.Generic.List<SpriteRenderer>();
-        System.Collections.Generic.List<BoxCollider2D> levelCollidersList = new System.Collections.Generic.List<BoxCollider2D>();
-
-        foreach (SpriteRenderer renderer in allRenderers)
-        {
-            if (renderer.gameObject.layer == groundLayer || renderer.gameObject.layer == wallLayer)
-            {
-                levelRenderersList.Add(renderer);
-            }
-        }
-
-        foreach (BoxCollider2D collider in allColliders)
-        {
-            if (collider.gameObject.layer == groundLayer || collider.gameObject.layer == wallLayer)
-            {
-                levelCollidersList.Add(collider);
-            }
-        }
-
-        levelRenderers = levelRenderersList.ToArray();
-        levelColliders = levelCollidersList.ToArray();
-        levelMaterials = new Material[levelRenderers.Length];
-
-        for (int i = 0; i < levelRenderers.Length; i++)
-        {
-            if (levelRenderers[i].material != null)
-            {
-                levelMaterials[i] = levelRenderers[i].material;
-            }
-        }
-    }
-
-    private void ChangeToColor(LevelColor targetColor)
-    {
-        if (currentColor == targetColor)
-        {
-            ChangeToColor(LevelColor.White);
+        if (inputConnected || GameInputManager.Instance == null)
             return;
-        }
 
-        Color colorToApply = GetColorValue(targetColor);
-        currentColor = targetColor;
+        var input = GameInputManager.Instance;
+        input.OnColorChangeInput += HandleColorChange;
+        input.OnRedPhaseAbilityInput += HandleRedPhaseAbility;
+        input.OnCycleColorLeftInput += () => CycleColor(-1);
+        input.OnCycleColorRightInput += () => CycleColor(1);
+        input.OnActivateAbilityInput += HandleRedPhaseAbility;
+        input.OnResetToWhiteInput += ResetToWhite;
 
-        colorToApply.a = 1.0f;
-        ApplyColorToAllLevels(colorToApply);
-        SetLevelCollidersEnabled(true);
+        inputConnected = true;
+    }
 
+    private void DisconnectInput()
+    {
+        if (!inputConnected || GameInputManager.Instance == null)
+            return;
+
+        var input = GameInputManager.Instance;
+        input.OnColorChangeInput -= HandleColorChange;
+        input.OnRedPhaseAbilityInput -= HandleRedPhaseAbility;
+        input.OnCycleColorLeftInput -= () => CycleColor(-1);
+        input.OnCycleColorRightInput -= () => CycleColor(1);
+        input.OnActivateAbilityInput -= HandleRedPhaseAbility;
+        input.OnResetToWhiteInput -= ResetToWhite;
+
+        inputConnected = false;
+    }
+
+    // --- Color System ---
+
+    private void HandleColorChange(LevelColor newColor)
+    {
+        if (newColor == currentColor)
+            ChangeToColor(LevelColor.White);
+        else
+            ChangeToColor(newColor);
+    }
+
+    private void ChangeToColor(LevelColor target)
+    {
+        currentColor = target;
+        Color c = GetColor(target);
+        ApplyColor(c);
+        SetCollidersEnabled(true);
         PlayerEvents.TriggerColorChange(currentColor);
     }
 
-    private IEnumerator RedPhaseAbility()
+    private void ApplyColor(Color c)
+    {
+        foreach (var mat in levelMaterials)
+            if (mat != null) mat.SetColor(colorPropertyName, c);
+    }
+
+    private Color GetColor(LevelColor lc) => lc switch
+    {
+        LevelColor.Red => redColor,
+        LevelColor.Blue => blueColor,
+        LevelColor.Green => greenColor,
+        LevelColor.Yellow => yellowColor,
+        LevelColor.Pink => pinkColor,
+        LevelColor.Brown => brownColor,
+        _ => whiteColor
+    };
+
+    // --- Red Phase ---
+
+    private void HandleRedPhaseAbility()
+    {
+        if (currentColor != LevelColor.Red) return;
+
+        if (redPhaseCoroutine != null)
+            StopCoroutine(redPhaseCoroutine);
+
+        redPhaseCoroutine = StartCoroutine(RedPhaseRoutine());
+    }
+
+    private IEnumerator RedPhaseRoutine()
     {
         isRedPhaseActive = true;
 
-        Color redColorTransparent = redColor;
-        redColorTransparent.a = 0.5f;
-        ApplyColorToAllLevels(redColorTransparent);
-        SetLevelCollidersEnabled(false);
+        var transparent = redColor;
+        transparent.a = 0.5f;
+        ApplyColor(transparent);
+        SetCollidersEnabled(false);
 
         yield return new WaitForSecondsRealtime(redPhaseDuration);
 
@@ -184,118 +162,60 @@ public class LevelColorManager : Singleton<LevelColorManager>
 
         if (currentColor == LevelColor.Red)
         {
-            Color redColorSolid = redColor;
-            redColorSolid.a = 1.0f;
-            ApplyColorToAllLevels(redColorSolid);
-            SetLevelCollidersEnabled(true);
+            var solid = redColor;
+            solid.a = 1f;
+            ApplyColor(solid);
+            SetCollidersEnabled(true);
         }
 
         redPhaseCoroutine = null;
     }
 
-    private Color GetColorValue(LevelColor levelColor)
-    {
-        return levelColor switch
-        {
-            LevelColor.Red => redColor,
-            LevelColor.Blue => blueColor,
-            LevelColor.Green => greenColor,
-            LevelColor.Yellow => yellowColor,
-            LevelColor.Pink => pinkColor,
-            LevelColor.Brown => brownColor,
-            LevelColor.White => whiteColor,
-            _ => whiteColor
-        };
-    }
+    // --- Reset / Respawn ---
 
-    private void ApplyColorToAllLevels(Color color)
-    {
-        for (int i = 0; i < levelMaterials.Length; i++)
-        {
-            if (levelMaterials[i] != null)
-            {
-                levelMaterials[i].SetColor(colorPropertyName, color);
-            }
-        }
-    }
-
-    private void SetLevelCollidersEnabled(bool enabled)
-    {
-        for (int i = 0; i < levelColliders.Length; i++)
-        {
-            if (levelColliders[i] != null)
-            {
-                levelColliders[i].enabled = enabled;
-            }
-        }
-    }
-
-    private void OnRedColorPressed()
-    {
-        ChangeToColor(LevelColor.Red);
-    }
-
-    private void OnBlueColorPressed()
-    {
-        ChangeToColor(LevelColor.Blue);
-    }
-
-    private void OnGreenColorPressed()
-    {
-        ChangeToColor(LevelColor.Green);
-    }
-
-    private void OnYellowColorPressed()
-    {
-        ChangeToColor(LevelColor.Yellow);
-    }
-
-    private void OnPinkColorPressed()
-    {
-        ChangeToColor(LevelColor.Pink);
-    }
-
-    private void OnBrownColorPressed()
-    {
-        ChangeToColor(LevelColor.Brown);
-    }
-
-    private void OnRedPhaseAbilityPressed()
-    {
-        if (currentColor == LevelColor.Red)
-        {
-            if (redPhaseCoroutine != null)
-            {
-                StopCoroutine(redPhaseCoroutine);
-            }
-            redPhaseCoroutine = StartCoroutine(RedPhaseAbility());
-        }
-    }
-
-    private void HandlePlayerRespawn()
+    public void ResetToWhite()
     {
         if (redPhaseCoroutine != null)
-        {
             StopCoroutine(redPhaseCoroutine);
-            redPhaseCoroutine = null;
-        }
 
         isRedPhaseActive = false;
         currentColor = LevelColor.White;
 
-        Color whiteColorSolid = whiteColor;
-        whiteColorSolid.a = 1.0f;
-        ApplyColorToAllLevels(whiteColorSolid);
-        SetLevelCollidersEnabled(true);
-
-        PlayerEvents.TriggerColorChange(currentColor);
+        ApplyColor(whiteColor);
+        SetCollidersEnabled(true);
+        PlayerEvents.TriggerColorChange(LevelColor.White);
     }
 
-    public void ResetToWhite()
+    // --- Utilities ---
+
+    private void FindLevelObjects()
     {
-        if (currentColor != LevelColor.White)
-        {
-            ChangeToColor(LevelColor.White);
-        }
+        int ground = LayerMask.NameToLayer("Ground");
+        int wall = LayerMask.NameToLayer("Wall");
+
+        levelRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None)
+            .Where(r => r.gameObject.layer == ground || r.gameObject.layer == wall)
+            .ToArray();
+
+        levelColliders = FindObjectsByType<BoxCollider2D>(FindObjectsSortMode.None)
+            .Where(c => c.gameObject.layer == ground || c.gameObject.layer == wall)
+            .ToArray();
+
+        levelMaterials = levelRenderers.Select(r => r.material).ToArray();
+    }
+
+    private void SetCollidersEnabled(bool enable)
+    {
+        foreach (var col in levelColliders)
+            if (col != null) col.enabled = enable;
+    }
+
+    private void CycleColor(int dir)
+    {
+        int i = System.Array.IndexOf(cyclableColors, currentColor);
+        if (i == -1) i = 0;
+        else i = (i + dir + cyclableColors.Length) % cyclableColors.Length;
+
+        ChangeToColor(cyclableColors[i]);
     }
 }

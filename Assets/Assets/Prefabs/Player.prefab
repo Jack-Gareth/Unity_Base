@@ -159,6 +159,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -180,6 +182,7 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
@@ -291,12 +294,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34ca519d0625b164d89d8f76932723c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JUMP_FORCE: 10
+  JUMP_FORCE: 14
   groundCheck: {fileID: 4407057339918942768}
   groundCheckRadius: 0.2
   groundMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 576
   coyoteTime: 0.05
   jumpBufferTime: 0.02
   jumpCooldown: 0.5
@@ -313,6 +316,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  groundCheck: {fileID: 4407057339918942768}
+  groundCheckRadius: 0.01
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 576
 --- !u!114 &1973204801748602447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -327,13 +335,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   wallCheckLeft: {fileID: 4366833596524178852}
   wallCheckRight: {fileID: 6395335867325097767}
-  wallCheckDistance: 0.3
+  wallCheckDistance: 0.09
   wallMask:
     serializedVersion: 2
-    m_Bits: 128
-  climbSpeed: 3
-  wallJumpForce: 8
-  wallJumpDirection: {x: 1, y: 1}
+    m_Bits: 1152
+  climbSpeed: 6
+  wallJumpForce: 9
+  wallJumpDirection: {x: 2, y: 1}
 --- !u!114 &7804789684518472943
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +354,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cce1a99e2fd902d4c8d363561c736dff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shrinkScaleFactor: 0.4
+  transitionDuration: 0.3
 --- !u!114 &6803062788073982075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,6 +369,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deathBoundaryY: -50
+  useTransitionOnDeath: 1
+  blackScreenDuration: 0.1
 --- !u!114 &3359667844197248274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,6 +385,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _groundCheck: {fileID: 4407057339918942768}
   _gravityFlipTravelSpeed: 10
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  raycastDistance: 20
+  lengthTolerance: 0.1
 --- !u!114 &3781917191067680897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -385,10 +402,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14d42e99dd5795c42beee542955af146, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounceForce: 16
+  bounceForce: 18
   groundLayer:
     serializedVersion: 2
     m_Bits: 64
+  nonMechanicLayer:
+    serializedVersion: 2
+    m_Bits: 1536
+  minVerticalDotProduct: 0.7
 --- !u!114 &488188979356421629
 MonoBehaviour:
   m_ObjectHideFlags: 0

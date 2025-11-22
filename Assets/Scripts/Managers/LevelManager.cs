@@ -1,15 +1,21 @@
-using System.Collections;
 using System;
-using System.Collections.Generic;
-using UnityEngine.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [CreateAssetMenu(fileName = "LevelManager", menuName = "Managers/LevelManager", order = 0)]
 public class LevelManager : ScriptableObject
 {
-    public Action OnScreenShow; //This event is called whenever the Uncover Screen finishes, indicating the player can now see the game
-    public Action OnScreenHide; //This event is called whenever the Cover Screen finishes, indicating the player can no longer see the game
-    public Action<Action> StartScreenHide; //This event is called whenever the Cover Screen starts
+    public Action OnScreenShow;
+    public Action OnScreenHide;
+    public Action<Action> StartScreenHide;
+
+    // Called when a level is completed
+    public void MarkCurrentLevelComplete()
+    {
+        string currentLevel = SceneManager.GetActiveScene().name;
+        SaveManager.MarkLevelComplete(currentLevel);
+        Debug.Log($"[LevelManager] Marked {currentLevel} as complete.");
+    }
 
     public void LoadSceneFade(int levelNum)
     {
@@ -33,5 +39,4 @@ public class LevelManager : ScriptableObject
     {
         OnScreenShow?.Invoke();
     }
-
 }

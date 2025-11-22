@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelColorSetup : MonoBehaviour
@@ -30,33 +31,46 @@ public class LevelColorSetup : MonoBehaviour
             }
         }
         
-        // Shader found and will be used
+        List<GameObject> levelParents = new List<GameObject>();
         
-        GameObject levelParent = GameObject.Find("Level");
-        if (levelParent == null)
+        GameObject levelGround = GameObject.Find("Level (Ground)");
+        if (levelGround != null)
         {
-            Debug.LogError("Level parent object not found!");
+            levelParents.Add(levelGround);
+        }
+        
+        GameObject levelWall = GameObject.Find("Level (Wall)");
+        if (levelWall != null)
+        {
+            levelParents.Add(levelWall);
+        }
+        
+        if (levelParents.Count == 0)
+        {
+            Debug.LogError("No level parent objects found! Looking for 'Level (Ground)' or 'Level (Wall)'.");
             return;
         }
         
-        SpriteRenderer[] renderers = levelParent.GetComponentsInChildren<SpriteRenderer>();
         int setupCount = 0;
         
-        foreach (SpriteRenderer renderer in renderers)
+        foreach (GameObject levelParent in levelParents)
         {
-            Material newMaterial = new Material(spriteColorShader);
-            newMaterial.name = $"LevelColorMaterial_{renderer.name}";
-            newMaterial.SetColor("_Color", Color.white);
+            SpriteRenderer[] renderers = levelParent.GetComponentsInChildren<SpriteRenderer>();
             
-            if (renderer.sprite != null)
+            foreach (SpriteRenderer renderer in renderers)
             {
-                newMaterial.SetTexture("_MainTex", renderer.sprite.texture);
+                Material newMaterial = new Material(spriteColorShader);
+                newMaterial.name = $"LevelColorMaterial_{renderer.name}";
+                newMaterial.SetColor("_Color", Color.white);
+                
+                if (renderer.sprite != null)
+                {
+                    newMaterial.SetTexture("_MainTex", renderer.sprite.texture);
+                }
+                
+                renderer.material = newMaterial;
+                setupCount++;
             }
-            
-            renderer.material = newMaterial;
-            setupCount++;
         }
-        
-        // Level objects setup complete
     }
 }
