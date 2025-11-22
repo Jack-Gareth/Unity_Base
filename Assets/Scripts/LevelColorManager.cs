@@ -137,15 +137,14 @@ public class LevelColorManager : Singleton<LevelColorManager>
 
     private void FindLevelObjects()
     {
-        int ground = LayerMask.NameToLayer("Ground");
-        int wall = LayerMask.NameToLayer("Wall");
+        int surfaces = LayerMask.NameToLayer("Surfaces");
 
         levelRenderers = FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None)
-            .Where(r => r.gameObject.layer == ground || r.gameObject.layer == wall)
+            .Where(r => r.gameObject.layer == surfaces)
             .ToArray();
 
         levelColliders = FindObjectsByType<BoxCollider2D>(FindObjectsSortMode.None)
-            .Where(c => c.gameObject.layer == ground || c.gameObject.layer == wall)
+            .Where(c => c.gameObject.layer == surfaces)
             .ToArray();
 
         levelMaterials = levelRenderers.Select(r => r.material).ToArray();

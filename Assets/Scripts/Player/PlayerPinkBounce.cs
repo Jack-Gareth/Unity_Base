@@ -5,7 +5,7 @@ public class PlayerPinkBounce : MonoBehaviour
 {
     [Header("Bounce Settings")]
     [SerializeField] private float bounceForce = 10f;
-    [SerializeField] private LayerMask groundLayer;
+    [SerializeField] private LayerMask surfacesMask;
     [SerializeField] private LayerMask nonMechanicLayer;
     [SerializeField] private float minVerticalDotProduct = 0.7f;
 
@@ -59,8 +59,8 @@ public class PlayerPinkBounce : MonoBehaviour
         if (!hasJumpedInPinkMode)
             return;
 
-        // Check if this collision is with valid ground
-        if (((1 << layer) & groundLayer) == 0)
+        // Check if this collision is with valid surfaces
+        if (((1 << layer) & surfacesMask) == 0)
             return;
 
         // Bounce only if collision is vertical (not wall)
@@ -77,7 +77,7 @@ public class PlayerPinkBounce : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (((1 << collision.gameObject.layer) & groundLayer) != 0)
+        if (((1 << collision.gameObject.layer) & surfacesMask) != 0)
             hasBouncedThisCollision = false;
     }
 
