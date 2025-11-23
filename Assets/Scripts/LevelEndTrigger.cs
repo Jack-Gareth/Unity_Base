@@ -2,20 +2,17 @@ using UnityEngine;
 
 public class LevelEndTrigger : MonoBehaviour
 {
+    [SerializeField] private LayerMask playerLayer;
+    private bool triggered = false;
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (triggered) return;
+
+        if (((1 << other.gameObject.layer) & playerLayer) != 0)
         {
-            LevelCompleteUI levelCompleteUI = FindObjectOfType<LevelCompleteUI>();
-            
-            if (levelCompleteUI != null)
-            {
-                levelCompleteUI.ShowLevelComplete();
-            }
-            else
-            {
-                Debug.LogWarning("LevelCompleteUI not found in the scene!");
-            }
+            triggered = true;
+            LevelCompleteUI.Instance?.ShowLevelComplete();
         }
     }
 }
