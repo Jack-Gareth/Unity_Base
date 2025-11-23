@@ -10,20 +10,34 @@ public class LevelMechanicsManager : MonoBehaviour
     [Tooltip("Enable phase through platform mechanics")]
     [SerializeField] private bool enableRedMechanic = false;
 
+    [Header("Green Mechanic (Player Resize)")]
+    [Tooltip("Enable player resize mechanics")]
+    [SerializeField] private bool enableGreenMechanic = false;
+    
+    [SerializeField] private GreenMechanicMode greenMode = GreenMechanicMode.Entry;
+    
+    [Tooltip("Scale factor when player enters (0.3 = 30% of default size)")]
+    [SerializeField][Range(0.3f, 1f)] private float greenScaleFactor = 0.6f;
+
     [Header("Wall Jump Height Requirement")]
     [Tooltip("Minimum height player must climb before wall jump is enabled")]
     [SerializeField] private float minimumClimbHeight = 1f;
 
     public bool IsBlueMechanicEnabled => enableBlueMechanic;
     public bool IsRedMechanicEnabled => enableRedMechanic;
+    public bool IsGreenMechanicEnabled => enableGreenMechanic;
+    public GreenMechanicMode GreenMode => greenMode;
+    public float GreenScaleFactor => greenScaleFactor;
     public bool IsPlayerInZone => isPlayerInZone;
     public bool CanWallJump => canWallJump;
     public Bounds ZoneBounds => zoneBounds;
 
     private bool previousBlueMechanic = false;
     private bool previousRedMechanic = false;
+    private bool previousGreenMechanic = false;
     private bool isPlayerInZone = false;
     private bool canWallJump = false;
+    private bool greenExitUsed = false;
     private float entryHeight = 0f;
     private Transform playerTransform;
     private Bounds zoneBounds;
@@ -33,6 +47,7 @@ public class LevelMechanicsManager : MonoBehaviour
     {
         previousBlueMechanic = enableBlueMechanic;
         previousRedMechanic = enableRedMechanic;
+        previousGreenMechanic = enableGreenMechanic;
 
         zoneCollider = GetComponent<BoxCollider2D>();
         if (zoneCollider != null)
@@ -68,14 +83,26 @@ public class LevelMechanicsManager : MonoBehaviour
         if (enableBlueMechanic && !previousBlueMechanic)
         {
             enableRedMechanic = false;
+            enableGreenMechanic = false;
             previousBlueMechanic = true;
             previousRedMechanic = false;
+            previousGreenMechanic = false;
         }
         else if (enableRedMechanic && !previousRedMechanic)
         {
             enableBlueMechanic = false;
+            enableGreenMechanic = false;
             previousBlueMechanic = false;
             previousRedMechanic = true;
+            previousGreenMechanic = false;
+        }
+        else if (enableGreenMechanic && !previousGreenMechanic)
+        {
+            enableBlueMechanic = false;
+            enableRedMechanic = false;
+            previousBlueMechanic = false;
+            previousRedMechanic = false;
+            previousGreenMechanic = true;
         }
         else if (!enableBlueMechanic && previousBlueMechanic)
         {
@@ -84,6 +111,10 @@ public class LevelMechanicsManager : MonoBehaviour
         else if (!enableRedMechanic && previousRedMechanic)
         {
             previousRedMechanic = false;
+        }
+        else if (!enableGreenMechanic && previousGreenMechanic)
+        {
+            previousGreenMechanic = false;
         }
     }
 
@@ -97,6 +128,23 @@ public class LevelMechanicsManager : MonoBehaviour
             
             bool isGrounded = CheckIfPlayerIsGrounded(other);
             canWallJump = !isGrounded;
+
+            if (enableGreenMechanic)
+            {
+                PlayerScaler scaler = other.GetComponent<PlayerScaler>();
+                if (scaler != null)
+                {
+                    if (greenMode == GreenMechanicMode.Entry)
+                    {
+                        scaler.ResizeToScale(greenScaleFactor);
+                    }
+                    else if (greenMode == GreenMechanicMode.Exit && !greenExitUsed)
+                    {
+                        scaler.ResetToDefaultSize();
+                        greenExitUsed = true;
+                    }
+                }
+            }
         }
     }
 
@@ -128,8 +176,10 @@ public class LevelMechanicsManager : MonoBehaviour
         {
             enableBlueMechanic = true;
             enableRedMechanic = false;
+            enableGreenMechanic = false;
             previousBlueMechanic = true;
             previousRedMechanic = false;
+            previousGreenMechanic = false;
         }
         else
         {
@@ -144,8 +194,10 @@ public class LevelMechanicsManager : MonoBehaviour
         {
             enableRedMechanic = true;
             enableBlueMechanic = false;
+            enableGreenMechanic = false;
             previousRedMechanic = true;
             previousBlueMechanic = false;
+            previousGreenMechanic = false;
         }
         else
         {
@@ -153,4 +205,33 @@ public class LevelMechanicsManager : MonoBehaviour
             previousRedMechanic = false;
         }
     }
+
+    public void SetGreenMechanic(bool enabled)
+    {
+        if (enabled)
+        {
+            enableGreenMechanic = true;
+            enableBlueMechanic = false;
+            enableRedMechanic = false;
+            previousGreenMechanic = true;
+            previousBlueMechanic = false;
+            previousRedMechanic = false;
+        }
+        else
+        {
+            enableGreenMechanic = false;
+            previousGreenMechanic = false;
+        }
+    }
+
+    public void ResetGreenExit()
+    {
+        greenExitUsed = false;
+    }
+}
+
+public enum GreenMechanicMode
+{
+    Entry,
+    Exit
 }
