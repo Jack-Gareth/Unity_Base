@@ -114,6 +114,8 @@ GameObject:
   - component: {fileID: 3359667844197248274}
   - component: {fileID: 3781917191067680897}
   - component: {fileID: 488188979356421629}
+  - component: {fileID: 8431968565727555115}
+  - component: {fileID: 1519407703137547553}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -297,9 +299,9 @@ MonoBehaviour:
   JUMP_FORCE: 14
   groundCheck: {fileID: 4407057339918942768}
   groundCheckRadius: 0.2
-  groundMask:
+  surfacesMask:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 2048
   coyoteTime: 0.05
   jumpBufferTime: 0.02
   jumpCooldown: 0.5
@@ -318,9 +320,9 @@ MonoBehaviour:
   moveSpeed: 5
   groundCheck: {fileID: 4407057339918942768}
   groundCheckRadius: 0.01
-  groundMask:
+  surfacesMask:
     serializedVersion: 2
-    m_Bits: 576
+    m_Bits: 2048
 --- !u!114 &1973204801748602447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -336,10 +338,11 @@ MonoBehaviour:
   wallCheckLeft: {fileID: 4366833596524178852}
   wallCheckRight: {fileID: 6395335867325097767}
   wallCheckDistance: 0.09
-  wallMask:
+  surfacesMask:
     serializedVersion: 2
-    m_Bits: 1152
+    m_Bits: 2048
   climbSpeed: 6
+  wallSlideSpeed: 2
   wallJumpForce: 9
   wallJumpDirection: {x: 2, y: 1}
 --- !u!114 &7804789684518472943
@@ -354,8 +357,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cce1a99e2fd902d4c8d363561c736dff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visualModel: {fileID: 0}
   shrinkScaleFactor: 0.4
-  transitionDuration: 0.3
+  resizeDuration: 0.25
 --- !u!114 &6803062788073982075
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,12 +388,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _groundCheck: {fileID: 4407057339918942768}
-  _gravityFlipTravelSpeed: 10
-  groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  raycastDistance: 20
-  lengthTolerance: 0.1
+  flipPushSpeed: 10
+  cooldownDuration: 1
 --- !u!114 &3781917191067680897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -403,12 +403,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bounceForce: 18
-  groundLayer:
+  surfacesMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 2048
   nonMechanicLayer:
     serializedVersion: 2
-    m_Bits: 1536
+    m_Bits: 0
   minVerticalDotProduct: 0.7
 --- !u!114 &488188979356421629
 MonoBehaviour:
@@ -424,3 +424,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxRewindDuration: 3
   recordFrequency: 0.02
+--- !u!114 &8431968565727555115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7762225231386029128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d96fa912bac72994d8ea0474b4b0388c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerChangeColliders
+  redPhaseExitDelay: 5
+  worldClipShader: {fileID: 4800000, guid: bcf36748b4cb6a14ca7fc2519846f66d, type: 3}
+  transparencyAlpha: 0.3
+--- !u!114 &1519407703137547553
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7762225231386029128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d72c751c92c559449b05e35d3528a624, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWallFriction
+  frictionMaterial: {fileID: 6200000, guid: 655b7f2adbc30694ab92ffd9d02a2bb0, type: 2}
+  noFrictionMaterial: {fileID: 0}
+  wallCheckLeft: {fileID: 4366833596524178852}
+  wallCheckRight: {fileID: 6395335867325097767}
+  wallCheckDistance: 0.3
+  surfacesMask:
+    serializedVersion: 2
+    m_Bits: 2048
