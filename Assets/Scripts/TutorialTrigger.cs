@@ -15,7 +15,6 @@ public class TutorialTrigger : MonoBehaviour
 
     private bool hasTriggered = false;
     private Collider2D triggerCollider;
-    private PlayerController pausedPlayer;
 
     private void Awake()
     {
@@ -30,32 +29,19 @@ public class TutorialTrigger : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            TriggerTutorial(other.gameObject);
+            TriggerTutorial();
         }
     }
 
-    private void TriggerTutorial(GameObject player)
+    private void TriggerTutorial()
     {
-        if (tutorialContent == null)
-        {
-            Debug.LogWarning($"TutorialTrigger on {gameObject.name} has no tutorial content assigned!");
+        if (tutorialContent == null || PopupSystem.Instance == null)
             return;
-        }
-
-        if (PopupSystem.Instance == null)
-        {
-            Debug.LogWarning("PopupSystem.Instance not found!");
-            return;
-        }
 
         if (pausePlayerMovement)
         {
-            pausedPlayer = player.GetComponent<PlayerController>();
-            if (pausedPlayer != null)
-            {
-                pausedPlayer.enabled = false;
-                StartCoroutine(WaitForPopupToClose());
-            }
+            GameManager.Instance?.DisablePlayerControl();
+            StartCoroutine(WaitForPopupToClose());
         }
 
         PopupSystem.Instance.Show(tutorialContent);
@@ -77,11 +63,7 @@ public class TutorialTrigger : MonoBehaviour
             yield return null;
         }
 
-        if (pausedPlayer != null)
-        {
-            pausedPlayer.enabled = true;
-            pausedPlayer = null;
-        }
+        GameManager.Instance?.EnablePlayerControl();
     }
 
     private void OnDrawGizmos()

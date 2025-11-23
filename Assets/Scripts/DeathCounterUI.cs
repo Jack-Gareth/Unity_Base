@@ -3,61 +3,25 @@ using TMPro;
 
 public class DeathCounterUI : MonoBehaviour
 {
-    [Header("UI References")]
-    [SerializeField] private TextMeshProUGUI deathCountText;
-    
-    [Header("Display Settings")]
-    [SerializeField] private string displayFormat = "Deaths: {0}";
-    
-    private bool isSubscribed = false;
-    
-    private void Start()
-    {
-        UpdateDeathCountDisplay(0);
-        TrySubscribe();
-    }
-    
+    [SerializeField] private TMP_Text deathCounterText;
+
     private void OnEnable()
     {
-        TrySubscribe();
+        DeathCounter.OnDeathCountChanged += UpdateUI;
     }
-    
+
     private void OnDisable()
     {
-        TryUnsubscribe();
+        DeathCounter.OnDeathCountChanged -= UpdateUI;
     }
-    
-    private void TrySubscribe()
+
+    private void Start()
     {
-        if (!isSubscribed)
-        {
-            DeathCounter instance = FindFirstObjectByType<DeathCounter>();
-            if (instance != null)
-            {
-                instance.OnDeathCountChanged += UpdateDeathCountDisplay;
-                isSubscribed = true;
-            }
-        }
+        deathCounterText.text = "Deaths: " + DeathCounter.Instance.DeathCount;
     }
-    
-    private void TryUnsubscribe()
+
+    private void UpdateUI(int newCount)
     {
-        if (isSubscribed)
-        {
-            DeathCounter instance = FindFirstObjectByType<DeathCounter>();
-            if (instance != null)
-            {
-                instance.OnDeathCountChanged -= UpdateDeathCountDisplay;
-            }
-            isSubscribed = false;
-        }
-    }
-    
-    private void UpdateDeathCountDisplay(int deathCount)
-    {
-        if (deathCountText != null)
-        {
-            deathCountText.text = string.Format(displayFormat, deathCount);
-        }
+        deathCounterText.text = "Deaths: " + newCount;
     }
 }

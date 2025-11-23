@@ -29,7 +29,10 @@ public class SwipeTransition : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            transform.SetParent(null);
+
             DontDestroyOnLoad(gameObject);
+
             CreateTransitionUI();
             SetupTransition();
         }
@@ -38,6 +41,7 @@ public class SwipeTransition : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
 
     private void CreateTransitionUI()
     {
