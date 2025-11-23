@@ -84,7 +84,7 @@ public class PlayerRespawn : MonoBehaviour
 
         if (playerScaler != null)
         {
-            playerScaler.ResetSize();
+            playerScaler.ForceResetSize();
         }
 
         if (DeathCounter.Instance != null)

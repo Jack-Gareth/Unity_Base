@@ -5,65 +5,35 @@ public class PlayerScaler : MonoBehaviour
 {
     [Header("Scaling")]
     [SerializeField] private Transform visualModel;
-    [SerializeField][Range(0.1f, 1f)] private float shrinkScaleFactor = 0.6f;
     [SerializeField][Range(0.05f, 2f)] private float resizeDuration = 0.25f;
 
     private Vector3 defaultScale;
-    private Vector3 shrunkScale;
-    private bool isShrunken = false;
     private Coroutine scaleRoutine;
 
     private void Awake()
     {
         if (visualModel == null)
-            visualModel = transform; // fallback
+            visualModel = transform;
 
         defaultScale = visualModel.localScale;
-        shrunkScale = defaultScale * shrinkScaleFactor;
     }
 
-    private void OnEnable()
+    public void ResizeToScale(float scaleFactor)
     {
-        PlayerEvents.OnColorAbility += OnAbilityPressed;
-        PlayerEvents.OnColorChanged += OnColorChanged;
+        Vector3 targetScale = defaultScale * scaleFactor;
+        
+        if (scaleRoutine != null)
+            StopCoroutine(scaleRoutine);
+
+        scaleRoutine = StartCoroutine(SmoothScale(targetScale));
     }
 
-    private void OnDisable()
-    {
-        PlayerEvents.OnColorAbility -= OnAbilityPressed;
-        PlayerEvents.OnColorChanged -= OnColorChanged;
-    }
-
-    private void OnAbilityPressed()
-    {
-        // Only works if Green
-        if (LevelColorManager.Instance.CurrentColor != LevelColor.Green)
-            return;
-
-        ToggleSize();
-    }
-
-    private void OnColorChanged(LevelColor newColor)
-    {
-        if (newColor != LevelColor.Green && isShrunken)
-            Resize(defaultScale, false);
-    }
-
-    private void ToggleSize()
-    {
-        if (isShrunken)
-            Resize(defaultScale, false);
-        else
-            Resize(shrunkScale, true);
-    }
-
-    private void Resize(Vector3 target, bool toShrunken)
+    public void ResetToDefaultSize()
     {
         if (scaleRoutine != null)
             StopCoroutine(scaleRoutine);
 
-        isShrunken = toShrunken;
-        scaleRoutine = StartCoroutine(SmoothScale(target));
+        scaleRoutine = StartCoroutine(SmoothScale(defaultScale));
     }
 
     private IEnumerator SmoothScale(Vector3 target)
@@ -82,13 +52,11 @@ public class PlayerScaler : MonoBehaviour
         scaleRoutine = null;
     }
 
-    public void ResetSize()
+    public void ForceResetSize()
     {
         if (scaleRoutine != null)
             StopCoroutine(scaleRoutine);
 
-        isShrunken = false;
         visualModel.localScale = defaultScale;
     }
-
 }
