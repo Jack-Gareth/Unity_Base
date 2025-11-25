@@ -33,6 +33,22 @@ public class LevelMechanicsManager : MonoBehaviour
     [Tooltip("Minimum height player must climb before wall jump is enabled")]
     [SerializeField] private float minimumClimbHeight = 1f;
 
+    [Header("Editor Visualization")]
+    [Tooltip("Color for Blue Mechanic zones (Scene view only)")]
+    [SerializeField] private Color blueMechanicColor = new Color(0.3f, 0.6f, 1f, 0.5f);
+    
+    [Tooltip("Color for Red Mechanic zones (Scene view only)")]
+    [SerializeField] private Color redMechanicColor = new Color(1f, 0.3f, 0.3f, 0.5f);
+    
+    [Tooltip("Color for Green Mechanic zones (Scene view only)")]
+    [SerializeField] private Color greenMechanicColor = new Color(0.3f, 1f, 0.3f, 0.5f);
+    
+    [Tooltip("Color for Yellow Mechanic zones (Scene view only)")]
+    [SerializeField] private Color yellowMechanicColor = new Color(1f, 0.9f, 0.3f, 0.5f);
+    
+    [Tooltip("Color when no mechanic is enabled (Scene view only)")]
+    [SerializeField] private Color disabledColor = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+
     public bool IsBlueMechanicEnabled => enableBlueMechanic;
     public bool IsRedMechanicEnabled => enableRedMechanic;
     public bool IsGreenMechanicEnabled => enableGreenMechanic;
@@ -56,6 +72,7 @@ public class LevelMechanicsManager : MonoBehaviour
     private Transform playerTransform;
     private Bounds zoneBounds;
     private BoxCollider2D zoneCollider;
+    private SpriteRenderer editorVisualRenderer;
 
     private void Awake()
     {
@@ -68,6 +85,17 @@ public class LevelMechanicsManager : MonoBehaviour
         if (zoneCollider != null)
         {
             zoneBounds = zoneCollider.bounds;
+        }
+
+        HideEditorVisualization();
+    }
+
+    private void HideEditorVisualization()
+    {
+        editorVisualRenderer = GetComponent<SpriteRenderer>();
+        if (editorVisualRenderer != null)
+        {
+            editorVisualRenderer.enabled = false;
         }
     }
 
