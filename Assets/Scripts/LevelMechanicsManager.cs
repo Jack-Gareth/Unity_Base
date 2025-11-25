@@ -19,6 +19,16 @@ public class LevelMechanicsManager : MonoBehaviour
     [Tooltip("Scale factor when player enters (0.3 = 30% of default size)")]
     [SerializeField][Range(0.3f, 1f)] private float greenScaleFactor = 0.6f;
 
+    [Header("Yellow Mechanic (Gravity Flip)")]
+    [Tooltip("Enable gravity flip mechanics")]
+    [SerializeField] private bool enableYellowMechanic = false;
+
+    [Tooltip("Velocity boost applied when flipping gravity")]
+    [SerializeField] private float flipPushSpeed = 10f;
+
+    [Tooltip("Cooldown duration between gravity flips")]
+    [SerializeField] private float gravityFlipCooldown = 1f;
+
     [Header("Wall Jump Height Requirement")]
     [Tooltip("Minimum height player must climb before wall jump is enabled")]
     [SerializeField] private float minimumClimbHeight = 1f;
@@ -26,8 +36,11 @@ public class LevelMechanicsManager : MonoBehaviour
     public bool IsBlueMechanicEnabled => enableBlueMechanic;
     public bool IsRedMechanicEnabled => enableRedMechanic;
     public bool IsGreenMechanicEnabled => enableGreenMechanic;
+    public bool IsYellowMechanicEnabled => enableYellowMechanic;
     public GreenMechanicMode GreenMode => greenMode;
     public float GreenScaleFactor => greenScaleFactor;
+    public float FlipPushSpeed => flipPushSpeed;
+    public float GravityFlipCooldown => gravityFlipCooldown;
     public bool IsPlayerInZone => isPlayerInZone;
     public bool CanWallJump => canWallJump;
     public Bounds ZoneBounds => zoneBounds;
@@ -35,6 +48,7 @@ public class LevelMechanicsManager : MonoBehaviour
     private bool previousBlueMechanic = false;
     private bool previousRedMechanic = false;
     private bool previousGreenMechanic = false;
+    private bool previousYellowMechanic = false;
     private bool isPlayerInZone = false;
     private bool canWallJump = false;
     private bool greenExitUsed = false;
@@ -48,6 +62,7 @@ public class LevelMechanicsManager : MonoBehaviour
         previousBlueMechanic = enableBlueMechanic;
         previousRedMechanic = enableRedMechanic;
         previousGreenMechanic = enableGreenMechanic;
+        previousYellowMechanic = enableYellowMechanic;
 
         zoneCollider = GetComponent<BoxCollider2D>();
         if (zoneCollider != null)
@@ -84,25 +99,41 @@ public class LevelMechanicsManager : MonoBehaviour
         {
             enableRedMechanic = false;
             enableGreenMechanic = false;
+            enableYellowMechanic = false;
             previousBlueMechanic = true;
             previousRedMechanic = false;
             previousGreenMechanic = false;
+            previousYellowMechanic = false;
         }
         else if (enableRedMechanic && !previousRedMechanic)
         {
             enableBlueMechanic = false;
             enableGreenMechanic = false;
+            enableYellowMechanic = false;
             previousBlueMechanic = false;
             previousRedMechanic = true;
             previousGreenMechanic = false;
+            previousYellowMechanic = false;
         }
         else if (enableGreenMechanic && !previousGreenMechanic)
         {
             enableBlueMechanic = false;
             enableRedMechanic = false;
+            enableYellowMechanic = false;
             previousBlueMechanic = false;
             previousRedMechanic = false;
             previousGreenMechanic = true;
+            previousYellowMechanic = false;
+        }
+        else if (enableYellowMechanic && !previousYellowMechanic)
+        {
+            enableBlueMechanic = false;
+            enableRedMechanic = false;
+            enableGreenMechanic = false;
+            previousBlueMechanic = false;
+            previousRedMechanic = false;
+            previousGreenMechanic = false;
+            previousYellowMechanic = true;
         }
         else if (!enableBlueMechanic && previousBlueMechanic)
         {
@@ -115,6 +146,10 @@ public class LevelMechanicsManager : MonoBehaviour
         else if (!enableGreenMechanic && previousGreenMechanic)
         {
             previousGreenMechanic = false;
+        }
+        else if (!enableYellowMechanic && previousYellowMechanic)
+        {
+            previousYellowMechanic = false;
         }
     }
 
@@ -213,14 +248,36 @@ public class LevelMechanicsManager : MonoBehaviour
             enableGreenMechanic = true;
             enableBlueMechanic = false;
             enableRedMechanic = false;
+            enableYellowMechanic = false;
             previousGreenMechanic = true;
             previousBlueMechanic = false;
             previousRedMechanic = false;
+            previousYellowMechanic = false;
         }
         else
         {
             enableGreenMechanic = false;
             previousGreenMechanic = false;
+        }
+    }
+
+    public void SetYellowMechanic(bool enabled)
+    {
+        if (enabled)
+        {
+            enableYellowMechanic = true;
+            enableBlueMechanic = false;
+            enableRedMechanic = false;
+            enableGreenMechanic = false;
+            previousYellowMechanic = true;
+            previousBlueMechanic = false;
+            previousRedMechanic = false;
+            previousGreenMechanic = false;
+        }
+        else
+        {
+            enableYellowMechanic = false;
+            previousYellowMechanic = false;
         }
     }
 
