@@ -3,42 +3,31 @@ using UnityEngine.UI;
 
 public class DiamondHUD : MonoBehaviour
 {
-    [Header("UI References")]
     [SerializeField] private Image[] diamondIcons;
-
-    [Header("Diamond Colors")]
     [SerializeField] private Color collectedColor = Color.yellow;
     [SerializeField] private Color uncollectedColor = Color.gray;
 
-    private int lastCollectedCount = -1;
+    private void OnEnable()
+    {
+        UIEvents.OnDiamondCountUpdated += UpdateDiamondDisplay;
+    }
+
+    private void OnDisable()
+    {
+        UIEvents.OnDiamondCountUpdated -= UpdateDiamondDisplay;
+    }
 
     private void Start()
     {
-        UpdateDiamondDisplay();
+            UpdateDiamondDisplay(
+                ItemCollectionManager.Instance.ItemsCollected, 
+                ItemCollectionManager.Instance.TotalItems);
+        
     }
 
-    private void Update()
+    private void UpdateDiamondDisplay(int collected, int total)
     {
-        if (ItemCollectionManager.Instance != null)
-        {
-            int currentCollected = ItemCollectionManager.Instance.ItemsCollected;
-            
-            if (currentCollected != lastCollectedCount)
-            {
-                lastCollectedCount = currentCollected;
-                UpdateDiamondDisplay();
-            }
-        }
-    }
-
-    private void UpdateDiamondDisplay()
-    {
-        if (ItemCollectionManager.Instance == null || diamondIcons == null || diamondIcons.Length == 0)
-        {
-            return;
-        }
-
-        int collected = ItemCollectionManager.Instance.ItemsCollected;
+        if (diamondIcons == null || diamondIcons.Length == 0) return;
 
         for (int i = 0; i < diamondIcons.Length; i++)
         {
