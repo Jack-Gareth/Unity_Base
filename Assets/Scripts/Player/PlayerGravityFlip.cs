@@ -11,6 +11,7 @@ public class PlayerGravityFlip : MonoBehaviour
     private bool isFlipped;
     private bool isOnCooldown;
     private bool isInGravityFlipZone;
+    private LevelMechanicsManager lastAutoFlipZone;
 
     private Vector3 normalGroundPos;
     private Vector3 invertedGroundPos;
@@ -66,6 +67,7 @@ public class PlayerGravityFlip : MonoBehaviour
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 0.5f);
         isInGravityFlipZone = false;
+        LevelMechanicsManager activeZone = null;
 
         foreach (Collider2D col in colliders)
         {
@@ -73,8 +75,21 @@ public class PlayerGravityFlip : MonoBehaviour
             if (zone != null && zone.IsYellowMechanicEnabled && zone.IsPlayerInZone)
             {
                 isInGravityFlipZone = true;
+                activeZone = zone;
+
+                if (zone.AutoFlipOnEntry && lastAutoFlipZone != zone && !isOnCooldown)
+                {
+                    lastAutoFlipZone = zone;
+                    FlipGravity();
+                    StartCoroutine(StartCooldown());
+                }
                 break;
             }
+        }
+
+        if (!isInGravityFlipZone && lastAutoFlipZone != null)
+        {
+            lastAutoFlipZone = null;
         }
     }
 
@@ -117,6 +132,7 @@ public class PlayerGravityFlip : MonoBehaviour
         rb.gravityScale = originalGravityScale;
         isFlipped = false;
         isOnCooldown = false;
+        lastAutoFlipZone = null;
         
         if (groundCheck != null)
         {
