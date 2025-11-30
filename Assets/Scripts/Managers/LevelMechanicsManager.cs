@@ -23,6 +23,9 @@ public class LevelMechanicsManager : MonoBehaviour
     [Tooltip("Enable gravity flip mechanics")]
     [SerializeField] private bool enableYellowMechanic = false;
 
+    [Tooltip("Automatically flip gravity when player enters zone (no button press needed)")]
+    [SerializeField] private bool autoFlipOnEntry = false;
+
     [Tooltip("Velocity boost applied when flipping gravity")]
     [SerializeField] private float flipPushSpeed = 10f;
 
@@ -53,6 +56,7 @@ public class LevelMechanicsManager : MonoBehaviour
     public bool IsRedMechanicEnabled => enableRedMechanic;
     public bool IsGreenMechanicEnabled => enableGreenMechanic;
     public bool IsYellowMechanicEnabled => enableYellowMechanic;
+    public bool AutoFlipOnEntry => autoFlipOnEntry;
     public GreenMechanicMode GreenMode => greenMode;
     public float GreenScaleFactor => greenScaleFactor;
     public float FlipPushSpeed => flipPushSpeed;
