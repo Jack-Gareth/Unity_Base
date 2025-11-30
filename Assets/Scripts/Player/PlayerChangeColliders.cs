@@ -45,11 +45,13 @@ public class PlayerChangeColliders : MonoBehaviour
     private void OnEnable()
     {
         PlayerEvents.OnColorAbility += HandleAbilityInput;
+        PlayerEvents.OnPlayerRespawn += HandlePlayerRespawn;
     }
 
     private void OnDisable()
     {
         PlayerEvents.OnColorAbility -= HandleAbilityInput;
+        PlayerEvents.OnPlayerRespawn -= HandlePlayerRespawn;
         RestoreOriginalMaterials();
         CleanupSplitColliders();
     }
@@ -81,6 +83,11 @@ public class PlayerChangeColliders : MonoBehaviour
                     RefreshLevelObjects();
                     Bounds zoneBounds = GetZoneBounds();
                     ApplyZoneClipping(zoneBounds);
+                }
+                else if (zone.AutoActivateRed)
+                {
+                    RefreshLevelObjects();
+                    StartRedPhase();
                 }
             }
         }
@@ -115,6 +122,24 @@ public class PlayerChangeColliders : MonoBehaviour
         {
             StartRedPhase();
         }
+    }
+
+    private void HandlePlayerRespawn()
+    {
+        if (isRedPhaseActive)
+        {
+            if (redPhaseExitCoroutine != null)
+            {
+                StopCoroutine(redPhaseExitCoroutine);
+                redPhaseExitCoroutine = null;
+            }
+            
+            EndRedPhase();
+            RestoreOriginalMaterials();
+        }
+        
+        currentZone = null;
+        isPlayerInZone = false;
     }
 
     private bool CanUseRedMechanic()
