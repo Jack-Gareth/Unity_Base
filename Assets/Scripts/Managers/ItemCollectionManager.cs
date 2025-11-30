@@ -36,6 +36,7 @@ public class ItemCollectionManager : MonoBehaviour
     public void CollectItem()
     {
         itemsCollected = Mathf.Clamp(itemsCollected + 1, 0, totalItemsInLevel);
+        // Notify global UI + systems through UIEvents
         UIEvents.RaiseDiamondCountUpdated(itemsCollected, totalItemsInLevel);
     }
 
