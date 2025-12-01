@@ -12,6 +12,14 @@ public class LevelEndTrigger : MonoBehaviour
         if (((1 << other.gameObject.layer) & playerLayer) != 0)
         {
             triggered = true;
+            
+            Rigidbody2D playerRb = other.GetComponent<Rigidbody2D>();
+            if (playerRb != null)
+            {
+                playerRb.linearVelocity = Vector2.zero;
+                playerRb.bodyType = RigidbodyType2D.Static;
+            }
+            
             LevelCompleteUI.Instance?.ShowLevelComplete();
         }
     }

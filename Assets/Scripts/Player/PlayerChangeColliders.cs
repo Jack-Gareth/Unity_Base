@@ -72,19 +72,7 @@ public class PlayerChangeColliders : MonoBehaviour
                 currentZone = zone;
                 isPlayerInZone = true;
                 
-                if (redPhaseExitCoroutine != null)
-                {
-                    StopCoroutine(redPhaseExitCoroutine);
-                    redPhaseExitCoroutine = null;
-                }
-                
-                if (isRedPhaseActive)
-                {
-                    RefreshLevelObjects();
-                    Bounds zoneBounds = GetZoneBounds();
-                    ApplyZoneClipping(zoneBounds);
-                }
-                else if (zone.AutoActivateRed)
+                if (zone.AutoActivateRed && !isRedPhaseActive)
                 {
                     RefreshLevelObjects();
                     StartRedPhase();
@@ -102,10 +90,8 @@ public class PlayerChangeColliders : MonoBehaviour
             
             if (isRedPhaseActive)
             {
-                if (redPhaseExitCoroutine != null)
-                    StopCoroutine(redPhaseExitCoroutine);
-                    
-                redPhaseExitCoroutine = StartCoroutine(RedPhaseExitDelayRoutine());
+                EndRedPhase();
+                RestoreOriginalMaterials();
             }
             
             currentZone = null;
