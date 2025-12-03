@@ -12,6 +12,9 @@ public class LevelMechanicsManager : MonoBehaviour
 
     [Tooltip("Automatically activate Red Mechanic when player enters zone (no button press needed)")]
     [SerializeField] private bool autoActivateRed = false;
+    
+    [Tooltip("Disable Red Mechanic after player uses it once (enters and exits the zone)")]
+    [SerializeField] private bool singleUseRed = false;
 
     [Header("Green Mechanic (Player Resize)")]
     [Tooltip("Enable player resize mechanics")]
@@ -61,6 +64,7 @@ public class LevelMechanicsManager : MonoBehaviour
     public bool IsYellowMechanicEnabled => enableYellowMechanic;
     public bool AutoFlipOnEntry => autoFlipOnEntry;
     public bool AutoActivateRed => autoActivateRed;
+    public bool SingleUseRed => singleUseRed;
     public GreenMechanicMode GreenMode => greenMode;
     public float GreenScaleFactor => greenScaleFactor;
     public float FlipPushSpeed => flipPushSpeed;
@@ -76,6 +80,8 @@ public class LevelMechanicsManager : MonoBehaviour
     private bool isPlayerInZone = false;
     private bool canWallJump = false;
     private bool greenExitUsed = false;
+    private bool redMechanicUsed = false;
+    private Vector2 redEntryPosition;
     private float entryHeight = 0f;
     private Transform playerTransform;
     private Bounds zoneBounds;
@@ -320,6 +326,51 @@ public class LevelMechanicsManager : MonoBehaviour
     public void ResetGreenExit()
     {
         greenExitUsed = false;
+    }
+    
+    public void SetRedEntryPosition(Vector2 position)
+    {
+        redEntryPosition = position;
+    }
+    
+    public bool CheckIfTraversed(Vector2 exitPosition)
+    {
+        if (zoneCollider == null) return false;
+        
+        Bounds bounds = zoneCollider.bounds;
+        Vector2 entryLocal = redEntryPosition - (Vector2)bounds.center;
+        Vector2 exitLocal = exitPosition - (Vector2)bounds.center;
+        
+        float width = bounds.size.x;
+        float height = bounds.size.y;
+        
+        if (width > height)
+        {
+            bool enteredFromLeft = entryLocal.x < 0;
+            bool exitedFromRight = exitLocal.x > 0;
+            bool enteredFromRight = entryLocal.x > 0;
+            bool exitedFromLeft = exitLocal.x < 0;
+            
+            return (enteredFromLeft && exitedFromRight) || (enteredFromRight && exitedFromLeft);
+        }
+        else
+        {
+            bool enteredFromBottom = entryLocal.y < 0;
+            bool exitedFromTop = exitLocal.y > 0;
+            bool enteredFromTop = entryLocal.y > 0;
+            bool exitedFromBottom = exitLocal.y < 0;
+            
+            return (enteredFromBottom && exitedFromTop) || (enteredFromTop && exitedFromBottom);
+        }
+    }
+    
+    public void MarkRedMechanicUsed()
+    {
+        if (singleUseRed && !redMechanicUsed)
+        {
+            redMechanicUsed = true;
+            enableRedMechanic = false;
+        }
     }
 }
 

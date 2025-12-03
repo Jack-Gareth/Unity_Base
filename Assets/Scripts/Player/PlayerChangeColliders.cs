@@ -72,6 +72,11 @@ public class PlayerChangeColliders : MonoBehaviour
                 currentZone = zone;
                 isPlayerInZone = true;
                 
+                if (zone.SingleUseRed)
+                {
+                    zone.SetRedEntryPosition(transform.position);
+                }
+                
                 if (zone.AutoActivateRed && !isRedPhaseActive)
                 {
                     RefreshLevelObjects();
@@ -92,6 +97,11 @@ public class PlayerChangeColliders : MonoBehaviour
             {
                 EndRedPhase();
                 RestoreOriginalMaterials();
+                
+                if (zone.SingleUseRed && zone.CheckIfTraversed(transform.position))
+                {
+                    zone.MarkRedMechanicUsed();
+                }
             }
             
             currentZone = null;
