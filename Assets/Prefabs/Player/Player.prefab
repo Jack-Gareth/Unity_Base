@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 488188979356421629}
   - component: {fileID: 8431968565727555115}
   - component: {fileID: 1519407703137547553}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -302,7 +302,7 @@ MonoBehaviour:
   surfacesMask:
     serializedVersion: 2
     m_Bits: 2048
-  coyoteTime: 0.05
+  coyoteTime: 0.2
   jumpBufferTime: 0.02
   jumpCooldown: 0.5
 --- !u!114 &4716415577388018932
@@ -318,11 +318,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 5
+  airControlPercent: 100
+  groundDrag: 30
   groundCheck: {fileID: 4407057339918942768}
   groundCheckRadius: 0.01
   surfacesMask:
     serializedVersion: 2
     m_Bits: 2048
+  groundFrictionMaterial: {fileID: 6200000, guid: 655b7f2adbc30694ab92ffd9d02a2bb0, type: 2}
+  airFrictionMaterial: {fileID: 0}
 --- !u!114 &1973204801748602447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,7 +362,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visualModel: {fileID: 0}
-  shrinkScaleFactor: 0.4
   resizeDuration: 0.25
 --- !u!114 &6803062788073982075
 MonoBehaviour:
@@ -387,9 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6cb10900a015a4e939f9f9d19e4aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _groundCheck: {fileID: 4407057339918942768}
-  flipPushSpeed: 10
-  cooldownDuration: 1
+  groundCheck: {fileID: 4407057339918942768}
 --- !u!114 &3781917191067680897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436,7 +437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d96fa912bac72994d8ea0474b4b0388c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerChangeColliders
-  redPhaseExitDelay: 5
+  redPhaseExitDelay: 1
   worldClipShader: {fileID: 4800000, guid: bcf36748b4cb6a14ca7fc2519846f66d, type: 3}
   transparencyAlpha: 0.3
 --- !u!114 &1519407703137547553
@@ -451,8 +452,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d72c751c92c559449b05e35d3528a624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerWallFriction
-  frictionMaterial: {fileID: 6200000, guid: 655b7f2adbc30694ab92ffd9d02a2bb0, type: 2}
-  noFrictionMaterial: {fileID: 0}
   wallCheckLeft: {fileID: 4366833596524178852}
   wallCheckRight: {fileID: 6395335867325097767}
   wallCheckDistance: 0.3
