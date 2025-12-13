@@ -116,7 +116,7 @@ GameObject:
   - component: {fileID: 488188979356421629}
   - component: {fileID: 8431968565727555115}
   - component: {fileID: 1519407703137547553}
-  m_Layer: 8
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -296,13 +296,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34ca519d0625b164d89d8f76932723c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  JUMP_FORCE: 14
+  jumpHeight: 3
   groundCheck: {fileID: 4407057339918942768}
   groundCheckRadius: 0.2
   surfacesMask:
     serializedVersion: 2
     m_Bits: 2048
-  coyoteTime: 0.05
+  coyoteTime: 0.1
   jumpBufferTime: 0.02
   jumpCooldown: 0.5
 --- !u!114 &4716415577388018932
@@ -358,7 +358,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visualModel: {fileID: 0}
-  shrinkScaleFactor: 0.4
   resizeDuration: 0.25
 --- !u!114 &6803062788073982075
 MonoBehaviour:
@@ -387,9 +386,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d6cb10900a015a4e939f9f9d19e4aa4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _groundCheck: {fileID: 4407057339918942768}
-  flipPushSpeed: 10
-  cooldownDuration: 1
+  groundCheck: {fileID: 4407057339918942768}
 --- !u!114 &3781917191067680897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -436,7 +433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d96fa912bac72994d8ea0474b4b0388c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerChangeColliders
-  redPhaseExitDelay: 5
+  redPhaseExitDelay: 1
   worldClipShader: {fileID: 4800000, guid: bcf36748b4cb6a14ca7fc2519846f66d, type: 3}
   transparencyAlpha: 0.3
 --- !u!114 &1519407703137547553

@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelProgressionManager : Singleton<LevelProgressionManager>
 {
-    [SerializeField] private string[] levelNames = { "Level 1", "Level 2" };
+    [SerializeField] private string[] levelNames = { "Level 1", "Level 2", "Level 3" };
 
     public void LoadNextLevel()
     {
