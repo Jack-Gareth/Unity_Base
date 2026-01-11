@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerJump : MonoBehaviour
 {
-    [SerializeField] private float JUMP_FORCE = 5f;
+    [SerializeField] private float jumpHeight = 3f;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask surfacesMask;
@@ -65,10 +65,16 @@ public class PlayerJump : MonoBehaviour
 
     private void PerformJump()
     {
+        float distanceFromGround = transform.position.y - groundCheck.position.y;
+        float targetHeight = jumpHeight + distanceFromGround;
+        
+        float gravity = Mathf.Abs(rb.gravityScale * Physics2D.gravity.y);
+        float jumpVelocity = Mathf.Sqrt(2f * gravity * targetHeight);
+        
         float jumpDirection = rb.gravityScale < 0 ? -1f : 1f;
-        float adjustedJumpForce = JUMP_FORCE * jumpDirection;
+        float adjustedJumpVelocity = jumpVelocity * jumpDirection;
 
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, adjustedJumpForce);
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, adjustedJumpVelocity);
         isGrounded = false;
         lastJumpPressedTime = -999f;
         canJump = false;
