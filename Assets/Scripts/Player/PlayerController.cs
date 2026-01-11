@@ -5,7 +5,6 @@ public class PlayerController : MonoBehaviour
     private PlayerMovement movement;
     private PlayerJump jump;
     private PlayerWallClimb wallClimb;
-    private PlayerWallFriction wallFriction;
 
     private bool isSubscribed = false;
 
@@ -14,7 +13,6 @@ public class PlayerController : MonoBehaviour
         movement = GetComponent<PlayerMovement>();
         jump = GetComponent<PlayerJump>();
         wallClimb = GetComponent<PlayerWallClimb>();
-        wallFriction = GetComponent<PlayerWallFriction>();
     }
 
     private void Start()
@@ -57,11 +55,9 @@ public class PlayerController : MonoBehaviour
         if (movement == null) return;
 
         wallClimb ??= GetComponent<PlayerWallClimb>();
-        wallFriction ??= GetComponent<PlayerWallFriction>();
 
         movement.SetMoveInput(input);
         wallClimb?.SetMoveInput(input);
-        wallFriction?.SetMoveInput(input);
     }
 
     private void OnJumpInput()
