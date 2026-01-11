@@ -17,14 +17,10 @@ public class PlayerJump : MonoBehaviour
     private float lastJumpPressedTime;
     private float lastJumpTime;
     private bool canJump;
-    private PlayerPinkBounce pinkBounce;
-    private PlayerWallClimb wallClimb;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        pinkBounce = GetComponent<PlayerPinkBounce>();
-        wallClimb = GetComponent<PlayerWallClimb>();
         lastJumpPressedTime = -999f;
         lastGroundedTime = -999f;
         lastJumpTime = -999f;
@@ -54,8 +50,6 @@ public class PlayerJump : MonoBehaviour
 
     public void TryJump()
     {
-        if (wallClimb != null && wallClimb.IsOnWall)
-            return;
 
         lastJumpPressedTime = Time.time;
 
@@ -79,7 +73,5 @@ public class PlayerJump : MonoBehaviour
         lastJumpPressedTime = -999f;
         canJump = false;
         lastJumpTime = Time.time;
-
-        pinkBounce?.NotifyJumpPerformed();
     }
 }

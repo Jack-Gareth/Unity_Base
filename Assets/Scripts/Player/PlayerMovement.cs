@@ -10,18 +10,13 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
-    private PlayerWallClimb wallClimb;
     private bool isGrounded;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        wallClimb = GetComponent<PlayerWallClimb>();
+        rb.bodyType = RigidbodyType2D.Dynamic;
         
-        if (rb != null)
-        {
-            rb.bodyType = RigidbodyType2D.Dynamic;
-        }
     }
 
     public void SetMoveInput(Vector2 input) => moveInput = input;
@@ -36,9 +31,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (wallClimb != null && wallClimb.JustWallJumped)
-            return;
-
         bool hasHorizontalInput = Mathf.Abs(moveInput.x) > 0.01f;
 
         if (hasHorizontalInput || isGrounded)

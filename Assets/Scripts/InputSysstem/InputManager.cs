@@ -8,11 +8,6 @@ public class GameInputManager : MonoBehaviour
 
     public Action<Vector2> OnMoveInput;
     public Action OnJumpInput;
-    public Action<LevelColor> OnColorChangeInput;
-    public Action OnCycleColorLeftInput;
-    public Action OnCycleColorRightInput;
-    public Action OnColorAbilityInput;
-    public Action OnResetToWhiteInput;
     public Action OnContinueDialogueInput;
     public Action OnConfirmInput;
 
@@ -42,12 +37,6 @@ public class GameInputManager : MonoBehaviour
 
         playerInputActions.Player.Jump.started += OnJumpPerformed;
 
-        playerInputActions.Player.ColorChange.performed += OnColorChangePerformed;
-        playerInputActions.Player.ColorAbility.performed += OnColorAbilityPerformed;
-
-        playerInputActions.Player.CycleColorLeft.performed += OnCycleColorLeftPerformed;
-        playerInputActions.Player.CycleColorRight.performed += OnCycleColorRightPerformed;
-
         playerInputActions.Player.ContinueDialogue.performed += OnContinueDialoguePerformed;
         playerInputActions.Player.Confirm.performed += OnConfirmPerformed;
     }
@@ -64,12 +53,6 @@ public class GameInputManager : MonoBehaviour
 
         playerInputActions.Player.Jump.started -= OnJumpPerformed;
 
-        playerInputActions.Player.ColorChange.performed -= OnColorChangePerformed;
-        playerInputActions.Player.ColorAbility.performed -= OnColorAbilityPerformed;
-
-        playerInputActions.Player.CycleColorLeft.performed -= OnCycleColorLeftPerformed;
-        playerInputActions.Player.CycleColorRight.performed -= OnCycleColorRightPerformed;
-
         playerInputActions.Player.ContinueDialogue.performed -= OnContinueDialoguePerformed;
         playerInputActions.Player.Confirm.performed -= OnConfirmPerformed;
 
@@ -85,30 +68,6 @@ public class GameInputManager : MonoBehaviour
     private void OnJumpPerformed(InputAction.CallbackContext ctx) =>
         OnJumpInput?.Invoke();
 
-    private void OnColorChangePerformed(InputAction.CallbackContext ctx)
-    {
-        LevelColor current = LevelColorManager.Instance.CurrentColor;
-        int next = ((int)current + 1) % Enum.GetValues(typeof(LevelColor)).Length;
-        LevelColor nextColor = (LevelColor)next;
-
-        OnColorChangeInput?.Invoke(nextColor);
-        PlayerEvents.TriggerColorChange(nextColor);
-    }
-
-    private void OnColorAbilityPerformed(InputAction.CallbackContext ctx)
-    {
-        OnColorAbilityInput?.Invoke();
-        PlayerEvents.TriggerColorAbility();
-    }
-
-    private void OnCycleColorLeftPerformed(InputAction.CallbackContext ctx) =>
-        OnCycleColorLeftInput?.Invoke();
-
-    private void OnCycleColorRightPerformed(InputAction.CallbackContext ctx) =>
-        OnCycleColorRightInput?.Invoke();
-
-    private void OnResetToWhitePerformed(InputAction.CallbackContext ctx) =>
-        OnResetToWhiteInput?.Invoke();
 
     private void OnContinueDialoguePerformed(InputAction.CallbackContext ctx) =>
         OnContinueDialogueInput?.Invoke();
