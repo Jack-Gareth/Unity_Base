@@ -114,7 +114,7 @@ public class PlayerWallClimb : MonoBehaviour
 
         bool touching = isTouchingLeft || isTouchingRight;
         
-        if (touching && rb.linearVelocity.y < 0)
+        if (touching && rb.linearVelocity.y < 0 && CanWallClimb())
         {
             float gravityDirection = rb.gravityScale < 0 ? 1f : -1f;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, wallSlideSpeed * gravityDirection);

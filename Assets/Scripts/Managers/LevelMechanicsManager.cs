@@ -10,6 +10,9 @@ public class LevelMechanicsManager : MonoBehaviour
     [Tooltip("Enable phase through platform mechanics")]
     [SerializeField] private bool enableRedMechanic = false;
 
+    [Tooltip("Automatically activate Red Mechanic when player enters zone (no button press needed)")]
+    [SerializeField] private bool autoActivateRed = false;
+
     [Header("Green Mechanic (Player Resize)")]
     [Tooltip("Enable player resize mechanics")]
     [SerializeField] private bool enableGreenMechanic = false;
@@ -57,6 +60,7 @@ public class LevelMechanicsManager : MonoBehaviour
     public bool IsGreenMechanicEnabled => enableGreenMechanic;
     public bool IsYellowMechanicEnabled => enableYellowMechanic;
     public bool AutoFlipOnEntry => autoFlipOnEntry;
+    public bool AutoActivateRed => autoActivateRed;
     public GreenMechanicMode GreenMode => greenMode;
     public float GreenScaleFactor => greenScaleFactor;
     public float FlipPushSpeed => flipPushSpeed;

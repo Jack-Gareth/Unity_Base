@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 9046686788979025681}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1, y: -3.5, z: 0}
-  m_LocalScale: {x: 2, y: 10, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -46,9 +46,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelMechanicsManager
   enableBlueMechanic: 1
-  enableBlueMechanicWallClimbOnly: 0
   enableRedMechanic: 0
+  autoActivateRed: 0
+  enableGreenMechanic: 0
+  greenMode: 0
+  greenScaleFactor: 0.6
+  enableYellowMechanic: 0
+  autoFlipOnEntry: 0
+  flipPushSpeed: 10
+  gravityFlipCooldown: 1
   minimumClimbHeight: 1
+  blueMechanicColor: {r: 0.3, g: 0.6, b: 1, a: 0.5}
+  redMechanicColor: {r: 1, g: 0.3, b: 0.3, a: 0.5}
+  greenMechanicColor: {r: 0.3, g: 1, b: 0.3, a: 0.5}
+  yellowMechanicColor: {r: 1, g: 0.9, b: 0.3, a: 0.5}
+  disabledColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.3}
 --- !u!61 &2354385758967722232
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -45,11 +45,13 @@ public class PlayerChangeColliders : MonoBehaviour
     private void OnEnable()
     {
         PlayerEvents.OnColorAbility += HandleAbilityInput;
+        PlayerEvents.OnPlayerRespawn += HandlePlayerRespawn;
     }
 
     private void OnDisable()
     {
         PlayerEvents.OnColorAbility -= HandleAbilityInput;
+        PlayerEvents.OnPlayerRespawn -= HandlePlayerRespawn;
         RestoreOriginalMaterials();
         CleanupSplitColliders();
     }
@@ -70,17 +72,10 @@ public class PlayerChangeColliders : MonoBehaviour
                 currentZone = zone;
                 isPlayerInZone = true;
                 
-                if (redPhaseExitCoroutine != null)
-                {
-                    StopCoroutine(redPhaseExitCoroutine);
-                    redPhaseExitCoroutine = null;
-                }
-                
-                if (isRedPhaseActive)
+                if (zone.AutoActivateRed && !isRedPhaseActive)
                 {
                     RefreshLevelObjects();
-                    Bounds zoneBounds = GetZoneBounds();
-                    ApplyZoneClipping(zoneBounds);
+                    StartRedPhase();
                 }
             }
         }
@@ -95,10 +90,8 @@ public class PlayerChangeColliders : MonoBehaviour
             
             if (isRedPhaseActive)
             {
-                if (redPhaseExitCoroutine != null)
-                    StopCoroutine(redPhaseExitCoroutine);
-                    
-                redPhaseExitCoroutine = StartCoroutine(RedPhaseExitDelayRoutine());
+                EndRedPhase();
+                RestoreOriginalMaterials();
             }
             
             currentZone = null;
@@ -115,6 +108,24 @@ public class PlayerChangeColliders : MonoBehaviour
         {
             StartRedPhase();
         }
+    }
+
+    private void HandlePlayerRespawn()
+    {
+        if (isRedPhaseActive)
+        {
+            if (redPhaseExitCoroutine != null)
+            {
+                StopCoroutine(redPhaseExitCoroutine);
+                redPhaseExitCoroutine = null;
+            }
+            
+            EndRedPhase();
+            RestoreOriginalMaterials();
+        }
+        
+        currentZone = null;
+        isPlayerInZone = false;
     }
 
     private bool CanUseRedMechanic()
