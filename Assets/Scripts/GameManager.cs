@@ -41,14 +41,12 @@ public class GameManager : MonoBehaviour
     private void OnEnable()
     {
         // Subscribe to UI-independent global events
-        UIEvents.OnDiamondCountUpdated += HandleDiamondUpdated;
-        UIEvents.OnDeathUpdated += HandleDeathUpdated;
+
     }
 
     private void OnDisable()
     {
-        UIEvents.OnDiamondCountUpdated -= HandleDiamondUpdated;
-        UIEvents.OnDeathUpdated -= HandleDeathUpdated;
+
     }
 
     private void EnsureSettingsObject()
@@ -64,16 +62,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void HandleDiamondUpdated(int collected, int total)
-    {
-        ItemsCollected = collected;
-        TotalItems = total;
-    }
-
-    private void HandleDeathUpdated(int newDeathCount)
-    {
-        DeathCount = newDeathCount;
-    }
 
     public void SetMovementEnabled(bool enabled) => gameSettings.CanMove = enabled;
     public void SetJumpEnabled(bool enabled) => gameSettings.CanJump = enabled;
