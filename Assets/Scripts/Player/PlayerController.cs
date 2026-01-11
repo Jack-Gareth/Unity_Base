@@ -4,6 +4,10 @@ public class PlayerController : MonoBehaviour
 {
     private PlayerMovement movement;
     private PlayerJump jump;
+<<<<<<< HEAD
+=======
+    private PlayerWallClimb wallClimb;
+>>>>>>> origin/main
 
     private bool isSubscribed = false;
 
@@ -11,6 +15,10 @@ public class PlayerController : MonoBehaviour
     {
         movement = GetComponent<PlayerMovement>();
         jump = GetComponent<PlayerJump>();
+<<<<<<< HEAD
+=======
+        wallClimb = GetComponent<PlayerWallClimb>();
+>>>>>>> origin/main
     }
 
     private void Start()
@@ -51,7 +59,15 @@ public class PlayerController : MonoBehaviour
             return;
 
         if (movement == null) return;
+<<<<<<< HEAD
         movement.SetMoveInput(input);
+=======
+
+        wallClimb ??= GetComponent<PlayerWallClimb>();
+
+        movement.SetMoveInput(input);
+        wallClimb?.SetMoveInput(input);
+>>>>>>> origin/main
     }
 
     private void OnJumpInput()
