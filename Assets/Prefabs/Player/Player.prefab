@@ -303,9 +303,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
 <<<<<<< HEAD
+<<<<<<< HEAD
   coyoteTime: 0.1
 =======
   coyoteTime: 0.2
+>>>>>>> origin/main
+=======
+  coyoteTime: 0.1
 >>>>>>> origin/main
   jumpBufferTime: 0.02
   jumpCooldown: 0.5
@@ -322,19 +326,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
 <<<<<<< HEAD
+<<<<<<< HEAD
   moveSpeed: 7
 =======
   moveSpeed: 5
   airControlPercent: 100
   groundDrag: 30
 >>>>>>> origin/main
+=======
+  moveSpeed: 7
+>>>>>>> origin/main
   groundCheck: {fileID: 4407057339918942768}
   groundCheckRadius: 0.01
   surfacesMask:
     serializedVersion: 2
     m_Bits: 2048
-  groundFrictionMaterial: {fileID: 6200000, guid: 655b7f2adbc30694ab92ffd9d02a2bb0, type: 2}
-  airFrictionMaterial: {fileID: 0}
 --- !u!114 &1973204801748602447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,6 +466,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d72c751c92c559449b05e35d3528a624, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerWallFriction
+  frictionMaterial: {fileID: 6200000, guid: 655b7f2adbc30694ab92ffd9d02a2bb0, type: 2}
+  noFrictionMaterial: {fileID: 0}
   wallCheckLeft: {fileID: 4366833596524178852}
   wallCheckRight: {fileID: 6395335867325097767}
   wallCheckDistance: 0.3
