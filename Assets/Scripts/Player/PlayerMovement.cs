@@ -17,6 +17,11 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         wallClimb = GetComponent<PlayerWallClimb>();
+        
+        if (rb != null)
+        {
+            rb.bodyType = RigidbodyType2D.Dynamic;
+        }
     }
 
     public void SetMoveInput(Vector2 input) => moveInput = input;

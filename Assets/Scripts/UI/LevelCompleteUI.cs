@@ -82,6 +82,8 @@ public class LevelCompleteUI : Singleton<LevelCompleteUI>
 
     private void LoadNextLevel()
     {
+        GameManager.Instance?.EnablePlayerControl();
+
         if (LevelProgressionManager.Instance != null)
         {
             LevelProgressionManager.Instance.LoadNextLevel();
