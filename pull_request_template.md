@@ -20,7 +20,7 @@ What steps should the reviewer(s) take to test this PR?
 ### Screenshots/Videos (optional):
 If you have made UI/Visual changes, whats are the before and after?
 
-### Quality check
+### Quality check -
 - [ ] My code follows the Style Guide.
 - [ ] Updates to the UI/Visuals match what was provided.
 - [ ] I have performed a self-review of my own code.
