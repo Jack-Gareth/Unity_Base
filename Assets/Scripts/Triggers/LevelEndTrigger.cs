@@ -18,9 +18,7 @@ public class LevelEndTrigger : MonoBehaviour
             {
                 playerRb.linearVelocity = Vector2.zero;
                 playerRb.bodyType = RigidbodyType2D.Static;
-            }
-            
-            LevelCompleteUI.Instance?.ShowLevelComplete();
+            }           
         }
     }
 }
