@@ -88,10 +88,4 @@ Contains sub-folders that have scripts relating to...
 
 ---
 
-## Contact Info
-James Jarvis - james.jarvis@twinkl.co.uk
-
-Jack Knowler - jack.knowler@twinkl.co.uk
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
